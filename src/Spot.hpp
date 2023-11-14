@@ -1,3 +1,6 @@
+#pragma once
+#include "Move.hpp"
+
 typedef int File;
 typedef int Rank;
 
@@ -11,4 +14,4 @@ public:
     void setFile(File file);
     Rank getRank();
     File getFile();
-}
+};
