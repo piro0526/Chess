@@ -3,6 +3,7 @@
 #include "Spot.hpp"
 #include <string>
 #include <vector>
+#include <array>
 
 static const int BOARD_SIZE = 8;
 
@@ -24,7 +25,7 @@ public:
     void setPiece(Piece piece, Spot spot);
     void movePiece(Move move);
     void capturePiece(Piece piece);
-    void unCapturedPiece(Piece piece);
+    void unCapturePiece(Piece piece);
     void resetTile(Spot spot);
     void viewBoard();
 };
