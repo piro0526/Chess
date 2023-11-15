@@ -1,4 +1,4 @@
-
+#pragma once
 
 
 class MoveValidator
@@ -12,29 +12,35 @@ public:
 class DiagonalMoveValidator : MoveValidator
 {
 public:
+    bool isMoveValid(Board board);
 };
 
 class HorizonalMoveValidator : MoveValidator
 {
 public:
+    bool isMoveValid(Board board);
 };
 
 class VerticalMoveValidator : MoveValidator
 {
 public:
+    bool isMoveValid(Board board);
 };
 
 class PawnMoveValidator : MoveValidator
 {
 public:
+    bool isMoveValid(Board board);
 };
 
 class KightMoveValidator : MoveValidator
 {
 public:
+    bool isMoveValid(Board board);
 };
 
 class SingleMoveValidator : MoveValidator
 {
 public:
+    bool isMoveValid(Board board);
 };
