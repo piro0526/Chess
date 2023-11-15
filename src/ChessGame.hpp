@@ -1,5 +1,16 @@
 #pragma once
 #include "PieceMetadata.hpp"
+#include <vector>
+
+class StateInfo
+{
+private:
+    int _stateCode;
+    std::string _stateMessage;
+public:
+    
+};
+
 
 class ChessGame
 {
