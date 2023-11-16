@@ -4,17 +4,17 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <memory>
+#include <algorithm>
 
 static const int BOARD_SIZE = 8;
 
 class Board
 {
 private:
-    Piece _rawboard[BOARD_SIZE][BOARD_SIZE];
-    std::string _configuration[BOARD_SIZE][BOARD_SIZE];
-    int height;
-    int width;
-    std::vector<Piece>  _capturedPieces;
+    std::array<std::array<std::unique_ptr<Piece>, BOARD_SIZE>, BOARD_SIZE> _rawBoard;
+    std::array<std::array<std::string, BOARD_SIZE>, BOARD_SIZE> _configuretion;
+    std::vector<std::unique_ptr<Piece>>  _capturedPieces;
 
 public:
     Board();
@@ -22,10 +22,11 @@ public:
     bool isOutofRange(Move move) const;
     bool isOutofRange(Spot spot) const;
     bool isSpotEmpty(Spot spot) const;
-    void setPiece(Piece piece, Spot spot);
-    void movePiece(Move move);
-    void capturePiece(Piece piece);
-    void unCapturePiece(Piece piece);
+    void setPiece(std::unique_ptr<Piece> piece, Spot spot);
+    bool movePiece(Move move);
+    void capturePiece(std::unique_ptr<Piece> piece);
+    void unCapturePiece(std::unique_ptr<Piece> piece);
     void resetTile(Spot spot);
     void viewBoard();
+    std::unique_ptr<Piece> getPiece(Spot spot) const;
 };

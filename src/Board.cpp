@@ -12,71 +12,65 @@ void Board::init()
 
 bool Board::isOutofRange(Move move) const
 {
-    if(move.getEnd().getFile() < 0 || move.getEnd().getFile() >= BOARD_SIZE)
-    {
-        return true;
-    }
-    
-    if(move.getEnd().getRank() < 0 || move.getEnd().getRank() >= BOARD_SIZE)
-    {
-        return true;
-    }
-
-    return false;
+    return isOutofRange(move.getStart()) || isOutofRange(move.getEnd());
 };
 
 bool Board::isOutofRange(Spot spot) const
 {
-    if(spot.getFile() < 0 || spot.getFile() >= BOARD_SIZE)
-    {
-        return true;
-    }
-    
-    if(spot.getRank() < 0 || spot.getRank() >= BOARD_SIZE)
-    {
-        return true;
-    }
-
-    return false;
+    return spot.getFile() < 0 || spot.getFile() >= BOARD_SIZE || spot.getRank() < 0 || spot.getRank() >= BOARD_SIZE;
 };
 
 bool Board::isSpotEmpty(Spot spot) const
 {
-    if(_rawboard[spot.getRank()][spot.getFile()].getSymbol() == "EMPTY")
+    return _rawBoard[spot.getRank()][spot.getFile()] == nullptr;
+};
+
+void Board::setPiece(std::unique_ptr<Piece> piece, Spot spot)
+{
+    _rawBoard[spot.getRank()][spot.getFile()] = piece;
+};
+
+bool Board::movePiece(Move move)
+{
+    if(isOutofRange(move))
     {
-        return true;
+        return false;
     };
-};
 
-void Board::setPiece(Piece piece, Spot spot)
-{
-    _rawboard[spot.getRank()][spot.getFile()] = piece;
-};
+    std::unique_ptr<Piece> piece = getPiece(move.getStart());
 
-void Board::movePiece(Move move)
-{
-    if(_rawboard[spot.getRank()][spot.getFile()].getSymbol() == "EMPTY")
+    if(piece == nullptr)
     {
-        
-    };
+        return false;
+    }
+
+    if(!isSpotEmpty(move.getEnd()))
+    {
+        capturePiece(getPiece(move.getEnd()));
+        resetTile(move.getEnd());
+    }
+    
+    setPiece(piece, move.getEnd());
+
+    return true;
 };
 
-void Board::capturePiece(Piece piece)
+void Board::capturePiece(std::unique_ptr<Piece> piece)
 {
-
+    _capturedPieces.push_back(piece);
 };
 
-void Board::unCapturePiece(Piece piece)
+void Board::unCapturePiece(std::unique_ptr<Piece> piece)
 {
-
+    std::remove(std::begin(_capturedPieces), std::end(_capturedPieces), piece);
 };
 
 void Board::resetTile(Spot spot)
 {
-
+    _rawBoard[spot.getRank()][spot.getFile()] = nullptr;
 };
 
 void Board::viewBoard()
 {
-
+    return;
 };
