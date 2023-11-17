@@ -10,6 +10,8 @@ private:
     Rank _rank;
     File _file;
 public:
+    Spot();
+    Spot(Rank rank, File file);
     void setRank(Rank rank);
     void setFile(File file);
     Rank getRank();

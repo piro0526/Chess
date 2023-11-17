@@ -2,12 +2,36 @@
 
 Board::Board()
 {
-
+    initBoard();
 };
 
-void Board::init()
+void Board::initBoard()
 {
-    
+    PieceFactory fac;
+
+    for(int i=0; i<BOARD_SIZE; i++)
+    {
+        for(int j=0; j<BOARD_SIZE; j++)
+        {
+            _rawBoard[i][j] = nullptr;
+        }
+    }
+
+    for(int i=0; i<2; i++)
+    {
+        for(int j=0; j<BOARD_SIZE; j++)
+        {
+            setPiece(fac.createPiece(_configuretion[i][j], WHITE), Spot(1 - i, j));
+        }
+    }
+
+    for(int i=0; i<2; i++)
+    {
+        for(int j=0; j<BOARD_SIZE; j++)
+        {
+            setPiece(fac.createPiece(_configuretion[i][j], BLACK), Spot(BOARD_SIZE - 2 + i, j));
+        }
+    }
 };
 
 bool Board::isOutofRange(Move move) const
@@ -25,7 +49,7 @@ bool Board::isSpotEmpty(Spot spot) const
     return _rawBoard[spot.getRank()][spot.getFile()] == nullptr;
 };
 
-void Board::setPiece(std::unique_ptr<Piece> piece, Spot spot)
+void Board::setPiece(std::shared_ptr<Piece> piece, Spot spot)
 {
     _rawBoard[spot.getRank()][spot.getFile()] = piece;
 };
@@ -37,7 +61,7 @@ bool Board::movePiece(Move move)
         return false;
     };
 
-    std::unique_ptr<Piece> piece = getPiece(move.getStart());
+    std::shared_ptr<Piece> piece = getPiece(move.getStart());
 
     if(piece == nullptr)
     {
@@ -55,12 +79,12 @@ bool Board::movePiece(Move move)
     return true;
 };
 
-void Board::capturePiece(std::unique_ptr<Piece> piece)
+void Board::capturePiece(std::shared_ptr<Piece> piece)
 {
     _capturedPieces.push_back(piece);
 };
 
-void Board::unCapturePiece(std::unique_ptr<Piece> piece)
+void Board::unCapturePiece(std::shared_ptr<Piece> piece)
 {
     std::remove(std::begin(_capturedPieces), std::end(_capturedPieces), piece);
 };

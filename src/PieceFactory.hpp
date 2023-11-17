@@ -4,5 +4,5 @@
 class PieceFactory
 {
 public:
-    Piece createPiece(std::string pieceType, Color color) const;
+    std::unique_ptr<Piece> createPiece(std::string pieceType, Color color) const;
 };

@@ -19,4 +19,5 @@ public:
     void addMoveValidator(MoveValidator MoveValidator);
     bool isAllyPiece(Piece piece);
     void gotMoved();
+    std::string getSymbol() const;
 };

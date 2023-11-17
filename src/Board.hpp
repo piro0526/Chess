@@ -1,6 +1,7 @@
 #pragma once
 #include "Piece.hpp"
 #include "Spot.hpp"
+#include "PieceFactory.hpp"
 #include <string>
 #include <vector>
 #include <array>
@@ -12,21 +13,24 @@ static const int BOARD_SIZE = 8;
 class Board
 {
 private:
-    std::array<std::array<std::unique_ptr<Piece>, BOARD_SIZE>, BOARD_SIZE> _rawBoard;
-    std::array<std::array<std::string, BOARD_SIZE>, BOARD_SIZE> _configuretion;
-    std::vector<std::unique_ptr<Piece>>  _capturedPieces;
+    std::array<std::array<std::shared_ptr<Piece>, BOARD_SIZE>, BOARD_SIZE> _rawBoard;
+    std::array<std::array<std::string, BOARD_SIZE>, 2> _configuretion = {{
+        {"Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn"},
+        {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"}
+        }};
+    std::vector<std::shared_ptr<Piece>>  _capturedPieces;
 
 public:
     Board();
-    void init();
+    void initBoard();
     bool isOutofRange(Move move) const;
     bool isOutofRange(Spot spot) const;
     bool isSpotEmpty(Spot spot) const;
-    void setPiece(std::unique_ptr<Piece> piece, Spot spot);
+    void setPiece(std::shared_ptr<Piece> piece, Spot spot);
     bool movePiece(Move move);
-    void capturePiece(std::unique_ptr<Piece> piece);
-    void unCapturePiece(std::unique_ptr<Piece> piece);
+    void capturePiece(std::shared_ptr<Piece> piece);
+    void unCapturePiece(std::shared_ptr<Piece> piece);
     void resetTile(Spot spot);
     void viewBoard();
-    std::unique_ptr<Piece> getPiece(Spot spot) const;
+    std::shared_ptr<Piece> getPiece(Spot spot) const;
 };
