@@ -1,4 +1,6 @@
 #pragma once
+#include "Board.hpp"
+#include <cstdlib>
 
 
 class MoveValidator
@@ -9,37 +11,37 @@ public:
     virtual bool isMoveValid(Board board, Move move) const;
 };
 
-class DiagonalMoveValidator : MoveValidator
+class DiagonalMoveValidator : public MoveValidator
 {
 public:
     bool isMoveValid(Board board, Move move) const;
 };
 
-class HorizonalMoveValidator : MoveValidator
+class HorizonalMoveValidator : public MoveValidator
 {
 public:
     bool isMoveValid(Board board, Move move) const;
 };
 
-class VerticalMoveValidator : MoveValidator
+class VerticalMoveValidator : public MoveValidator
 {
 public:
     bool isMoveValid(Board board, Move move) const;
 };
 
-class PawnMoveValidator : MoveValidator
+class PawnMoveValidator : public MoveValidator
 {
 public:
     bool isMoveValid(Board board, Move move) const;
 };
 
-class KightMoveValidator : MoveValidator
+class KightMoveValidator : public MoveValidator
 {
 public:
     bool isMoveValid(Board board, Move move) const;
 };
 
-class SingleMoveValidator : MoveValidator
+class SingleMoveValidator : public MoveValidator
 {
 public:
     bool isMoveValid(Board board, Move move) const;

@@ -6,8 +6,10 @@ class Move
 private:
     Spot _startSpot, _endSpot;
 public:
-    void setStart(Spot startSpot);
-    void setEnd(Spot endSpot);
-    Spot getStart();
-    Spot getEnd();
+    Move() : Move(Spot(), Spot()){};
+    Move(Spot s, Spot e) : _startSpot(s),_endSpot(e){};
+    void setStart(Spot startSpot){_startSpot=startSpot;};
+    void setEnd(Spot endSpot){_endSpot=endSpot;};
+    Spot getStart(){return _startSpot;};
+    Spot getEnd(){return _endSpot;};
 };
