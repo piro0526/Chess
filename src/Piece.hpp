@@ -17,9 +17,11 @@ public:
     Piece(Color color) : _color(color){};
     bool canMakeMove(Board board, Move move) const;
     void addMoveValidator(MoveValidator MoveValidator);
-    bool isAllyPiece(Piece piece);
+    bool isAllyPiece(std::shared_ptr<Piece> piece);
     void gotMoved();
     std::string getSymbol() const;
+    Color getColor() const;
+    bool hasBeenMoved() const;
 };
 
 class Pawn : public Piece
@@ -27,7 +29,7 @@ class Pawn : public Piece
 private:
 
 public:
-    Pawn(Color color) : Piece(color){};
+    Pawn(Color color);
 };
 
 
@@ -36,7 +38,7 @@ class Rook : public Piece
 private:
 
 public:
-    Rook(Color color) : Piece(color){};
+    Rook(Color color);
 };
 
 class Knight : public Piece
@@ -44,7 +46,7 @@ class Knight : public Piece
 private:
 
 public:
-    Knight(Color color) : Piece(color){};
+    Knight(Color color);
 };
 
 class Bishop : public Piece
@@ -52,7 +54,7 @@ class Bishop : public Piece
 private:
 
 public:
-    Bishop(Color color) : Piece(color){};
+    Bishop(Color color);
 };
 
 class Queen : public Piece
@@ -60,7 +62,7 @@ class Queen : public Piece
 private:
 
 public:
-    Queen(Color color) : Piece(color){};
+    Queen(Color color);
 };
 
 class King : public Piece
@@ -68,5 +70,5 @@ class King : public Piece
 private:
 
 public:
-    King(Color color) : Piece(color){};
+    King(Color color);
 };

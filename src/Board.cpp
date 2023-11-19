@@ -98,3 +98,8 @@ void Board::viewBoard()
 {
     return;
 };
+
+std::shared_ptr<Piece> Board::getPiece(Spot spot) const
+{
+    return _rawBoard[spot.getRank()][spot.getFile()];
+};
