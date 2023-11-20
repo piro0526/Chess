@@ -1,6 +1,7 @@
 #pragma once
 #include "Board.hpp"
 #include "MoveValidator.hpp"
+#include "MoveValidatorFactory.hpp"
 
 typedef int Color;
 static const Color BLACK = -1;
@@ -11,12 +12,12 @@ class Piece
 protected:
     std::string _symbol;
     Color _color;
-    std::vector<MoveValidator> _moveVaridators;
+    std::vector<std::shared_ptr<MoveValidator>> _moveVaridators;
     int _movedAmount;
 public:
     Piece(Color color) : _color(color){};
     bool canMakeMove(Board board, Move move) const;
-    void addMoveValidator(MoveValidator MoveValidator);
+    void addMoveValidator(std::shared_ptr<MoveValidator> moveValidator);
     bool isAllyPiece(std::shared_ptr<Piece> piece);
     void gotMoved();
     std::string getSymbol() const;
