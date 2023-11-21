@@ -3,13 +3,20 @@
 
 ChessGame::ChessGame()
 {
+    _whitePlayer = stdinPlayer(WHITE);
+    _blackPlayer = stdinPlayer(BLACK);
+    init();
+};
 
+ChessGame::ChessGame(Player whitePlayer, Player blackPlayer)
+{
+    _whitePlayer = whitePlayer;
+    _blackPlayer = blackPlayer;
+    init();
 };
 
 void ChessGame::init()
 {
-    _whitePlayer = Player(WHITE);
-    _blackPlayer = Player(BLACK);
     _board = Board();
     metadata = PieceMetadata();
     _check.pushback(std::make_unique<Checkstate()>);
@@ -25,15 +32,31 @@ void ChessGame::init()
     castling.setNext(enPassant);
     castling.setNext(castling);
     _moveHandler = castling;
-
 };
 
 void ChessGame::start()
 {
+    Player _currentPlayer = _whitePlayer;
+    StateInfo gameState(0, "");
 
+    while(gameState.getStateCode() <= 1)
+    {
+        viewBoard();
+        playTurn(currentPlayer);
+        gameState = _stateChecker.checkState(metadata, swapPlayers(currentPlayer).getColor());
+        if(gameState.getStateCode() != 0)
+        {
+            std::cout << gameState.getStateDescription() << std::endl;
+        }
+        currentPlayer = swapPlayers(currentPlayer);
+        if(gameState.getStateCode() == 2)
+        {
+            viewBoard();
+        }
+    }
 };
 
-Move ChessGame::playTurn(Player player)
+void ChessGame::playTurn(Player player)
 {
     Move move = getPlayerInput(player);
     Spot startSpot = move.getStart();
@@ -49,7 +72,7 @@ Move ChessGame::playTurn(Player player)
         StateInfo gameState = stateChecker.checkIlleagalState(metadata, player.getColor());
         if(gameState.getStateCode() != 0)
         {
-            undoMove(move, startPiece, endPiece);
+            undo(move, startPiece, endPiece);
             playturn(player);
         }
     }
@@ -57,7 +80,7 @@ Move ChessGame::playTurn(Player player)
 
 Move ChessGame::getPlayerInput(Player player)
 {
-    return player.nextMove();
+    return player.nextMove(_board.getFEN());
 };
 
 Spot ChessGame::parseCoordinates(std::string strCoodinates)
@@ -67,12 +90,19 @@ Spot ChessGame::parseCoordinates(std::string strCoodinates)
     return Spot(x, y);
 };
 
-void ChessGame::undo(Move move, std::shared_ptr<Piece> startPiece, std::shared_ptr<Piece> endPiece)
+void ChessGame::undo()
 {
-    if (endPiece != nullptr)
+    _board.undo();
+};
+
+Player ChessGame::swapPlayer(Player player)
+{
+    if(player.getColor() == WHITE)
     {
-        _board.unCapturePiece(endPiece);
+        return _blackPlayer;
     }
-    _board.setPiece(startPiece, move.getStart());
-    _board.setPiece(endPiece, move.getEnd());
+    else
+    {
+        return _whitePlayer;
+    }
 };

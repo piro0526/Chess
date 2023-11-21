@@ -1,5 +1,6 @@
 #pragma once
 #include "PieceMetadata.hpp"
+#include "Player.hpp"
 #include <vector>
 
 class StateInfo
@@ -8,7 +9,7 @@ private:
     int _stateCode;
     std::string _stateMessage;
 public:
-    
+    StateInfo(int stateCode, std::string stateMessage) : _stateCode(stateCode), _stateMessage(stateMessage){};
 };
 
 
@@ -17,16 +18,18 @@ class ChessGame
 private:
     Player _whitePlayer, _blackPlayer;
     Board _board;
-    PieceMetaData _metadata;
+    PieceMetadata _metadata;
     IMoveHandler _moveHandler:
     AbstructStateChecker _stateChecker;
     std::vector<std::shared_ptr<GameStateCheck>> _checks;
+    int _turns;
 public:
     ChessGame();
+    ChessGame(Player whitePlayer, Player _blackPlayer);
     void init();
-    Move playTurn(Player player);
+    void playTurn(Player player);
     Move getPlayerInput(Player player);
     Spot parseCoordinates(std::string strCoodinates);
-    void undo(Move move, std::shared_ptr<Piece> startPiece, std::shared_ptr<Piece> endPiece);
-    Player swapPlayer(Player cuurentPlayer);
+    void undo();
+    Player swapPlayer(Player player);
 };
