@@ -28,27 +28,51 @@ void ChessGame::init()
 
 };
 
+void ChessGame::start()
+{
+
+};
+
 Move ChessGame::playTurn(Player player)
 {
+    Move move = getPlayerInput(player);
+    Spot startSpot = move.getStart();
+    Piece startPiece = *_board.getPiece(move.getStart());
+    Piece endPiece = *_board.getPiece(move.getEnd());
     
+    if(_board.isSpotEmpty(startSpot) || !_board.getPiece(startSpot)->getColor() == player.getColor() || !_moveHandler.handlemove(_metadata, move))
+    {
+        playTurn(player);
+    }
+    else
+    {
+        StateInfo gameState = stateChecker.checkIlleagalState(metadata, player.getColor());
+        if(gameState.getStateCode() != 0)
+        {
+            undoMove(move, startPiece, endPiece);
+            playturn(player);
+        }
+    }
 };
 
 Move ChessGame::getPlayerInput(Player player)
 {
-    
+    return player.nextMove();
 };
 
 Spot ChessGame::parseCoordinates(std::string strCoodinates)
 {
-    
+    int x = int(strCoodinates[0]) - int("a");
+    int y = int(strCoodinates[1]);
+    return Spot(x, y);
 };
 
-void ChessGame::undo()
+void ChessGame::undo(Move move, std::shared_ptr<Piece> startPiece, std::shared_ptr<Piece> endPiece)
 {
-    
-};
-
-Player ChessGame::swapPlayer(Player cuurentPlayer)
-{
-    
+    if (endPiece != nullptr)
+    {
+        _board.unCapturePiece(endPiece);
+    }
+    _board.setPiece(startPiece, move.getStart());
+    _board.setPiece(endPiece, move.getEnd());
 };

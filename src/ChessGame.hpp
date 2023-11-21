@@ -27,6 +27,6 @@ public:
     Move playTurn(Player player);
     Move getPlayerInput(Player player);
     Spot parseCoordinates(std::string strCoodinates);
-    void undo();
+    void undo(Move move, std::shared_ptr<Piece> startPiece, std::shared_ptr<Piece> endPiece);
     Player swapPlayer(Player cuurentPlayer);
 };

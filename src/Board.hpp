@@ -19,6 +19,7 @@ private:
         {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"}
         }};
     std::vector<std::shared_ptr<Piece>>  _capturedPieces;
+    std::vector<std::tuple<Move, std::shared_ptr<Piece>, std::shared_ptr<Piece>>> ;
 
 public:
     Board();
