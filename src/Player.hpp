@@ -6,6 +6,7 @@ class Player
 private:
     Color _color;
 public:
+    Player() : Player(WHITE){};
     Player(Color color): _color(color){};
     virtual Move nextMove(std::string FEN){};
 };

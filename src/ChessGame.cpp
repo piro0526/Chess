@@ -18,20 +18,20 @@ ChessGame::ChessGame(Player whitePlayer, Player blackPlayer)
 void ChessGame::init()
 {
     _board = Board();
-    metadata = PieceMetadata();
-    _check.pushback(std::make_unique<Checkstate()>);
-    _check.pushback(std::make_unique<CheckMateState()>);
-    _check.pushback(std::make_unique<StaleMatestate()>);
-    _stateChecker = std::make_unique<GameStateChecker()>;
+    _metadata = PieceMetadata();
+    _check.pushback(std::unique_ptr<CheckState>());
+    _check.pushback(std::unique_ptr<CheckMateState>());
+    _check.pushback(std::unique_ptr<StaleMateState>());
+    _stateChecker = std::unique_ptr<GameStateChecker>();
 
-    MoveHandler reg = std::make_unique<RegulerMoveHandler()>;
-    MoveHandler enPassant = std::make_unique<EnPassantMoveHandler()>;
-    MoveHandler promotion = std::make_unique<PromotionMoveHandler()>;
-    MoveHandler castling = std::make_unique<CastlingMoveHandler()>;
-    castling.setNext(promotion);
-    castling.setNext(enPassant);
-    castling.setNext(castling);
-    _moveHandler = castling;
+    std::unique_ptr<MoveHandler> reg = std::make_unique<RegularMoveHandler>();
+    std::unique_ptr<MoveHandler> enPassant = std::make_unique<EnPassantMoveHandler>();
+    std::unique_ptr<MoveHandler> promotion = std::make_unique<PromotionMoveHandler>();
+    std::unique_ptr<MoveHandler> castling = std::make_unique<CastlingMoveHandler>();
+    castling->setNext(std::move(promotion));
+    promotion->setNext(std::move(enPassant));
+    enPassant->setNext(std::move(reg));
+    _moveHandler = std::move(castling);
 };
 
 void ChessGame::start()

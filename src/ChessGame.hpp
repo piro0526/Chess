@@ -1,16 +1,10 @@
 #pragma once
 #include "PieceMetadata.hpp"
+#include "StateChecker.hpp"
 #include "Player.hpp"
+#include "Movehandler.hpp"
+#include "GameStateCheck.hpp"
 #include <vector>
-
-class StateInfo
-{
-private:
-    int _stateCode;
-    std::string _stateMessage;
-public:
-    StateInfo(int stateCode, std::string stateMessage) : _stateCode(stateCode), _stateMessage(stateMessage){};
-};
 
 
 class ChessGame
@@ -19,8 +13,8 @@ private:
     Player _whitePlayer, _blackPlayer;
     Board _board;
     PieceMetadata _metadata;
-    IMoveHandler _moveHandler:
-    AbstructStateChecker _stateChecker;
+    std::unique_ptr<IMoveHandler> _moveHandler;
+    StateChecker _stateChecker;
     std::vector<std::shared_ptr<GameStateCheck>> _checks;
     int _turns;
 public:

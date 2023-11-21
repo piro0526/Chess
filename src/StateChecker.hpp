@@ -1,22 +1,33 @@
 #pragma once
 #include "GameStateCheck.hpp"
 #include <vector>
+#include <string>
 
-class AbstructStateChecker
+
+class StateInfo
 {
 private:
-    ChessGame _chessGame;
+    int _stateCode;
+    std::string _stateMessage;
 public:
-    virtual StateInfo checkState(Color color) const;
-    virtual Stateinfo checkIllegalStates(Color color) const;
+    StateInfo(int stateCode, std::string stateMessage) : _stateCode(stateCode), _stateMessage(stateMessage){};
 };
 
-class GameStateChecker : AbstructStateChecker
+
+
+class StateChecker
+{
+private:
+public:
+    virtual StateInfo checkState(PieceMetadata metadata, Color color) const;
+    virtual StateInfo checkIllegalStates(PieceMetadata metadata, Color color) const;
+};
+
+class GameStateChecker : public StateChecker
 {
 private:
     std::vector<GameStateCheck> _checks;
 public:
     StateInfo checkState(Color color) const;
-    Stateinfo checkIllegalStates(Color color) const;
-    void addGameStateCheck(GameStateCheck);
+    StateInfo checkIllegalStates(Color color) const;
 };

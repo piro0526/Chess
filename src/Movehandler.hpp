@@ -4,19 +4,19 @@
 class IMoveHandler
 {
 public:
-    virtual void setNext(IMoveHandler nextMoveHandler);
-    virtual bool handleMove(Board board, PieceMetadata metadata, Move move);
+    virtual void setNext(std::unique_ptr<IMoveHandler> nextMoveHandler)=0;
+    virtual bool handleMove(Board board, PieceMetadata metadata, Move move)=0;
 };
 
-class MoveHandler : IMoveHandler
+class MoveHandler : public IMoveHandler
 {
 protected:
-    IMoveHandler _nextMoveHandler;
+    std::unique_ptr<IMoveHandler> _nextMoveHandler;
 public:
-    void setNext(IMoveHandler nextMoveHandler);
+    void setNext(std::unique_ptr<IMoveHandler> nextMoveHandler);
 };
 
-class CastlingMoveHandler : MoveHandler
+class CastlingMoveHandler : public MoveHandler
 {
 public:
     bool handleMove(Board board, PieceMetadata metadata, Move move);
@@ -24,21 +24,21 @@ public:
 
 };
 
-class EnPassantMoveHandler : MoveHandler
+class EnPassantMoveHandler : public MoveHandler
 {
 public:
     bool handleMove(Board board, PieceMetadata metadata, Move move);
     bool isEnPassantMove(Board board, Move move);
 };
 
-class PromotionMoveHandler : MoveHandler
+class PromotionMoveHandler : public MoveHandler
 {
 public:
     bool handleMove(Board board, PieceMetadata metadata, Move move);
     bool isPromotionMove(Board board, Move move);
 };
 
-class RegularMoveHandler : MoveHandler
+class RegularMoveHandler : public MoveHandler
 {
 public:
     bool handleMove(Board board, PieceMetadata metadata, Move move);
