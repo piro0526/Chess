@@ -52,45 +52,33 @@ bool Piece::hasBeenMoved() const
 
 Pawn::Pawn(Color color) : Piece(color)
 {
-    MoveValidatorFactory fac;
-
-    addMoveValidator(fac.createMoveValidator("Pawn"));
+    addMoveValidator(std::make_unique<PawnMoveValidator>());
 };
 
 Rook::Rook(Color color) : Piece(color)
 {
-    MoveValidatorFactory fac;
-
-    addMoveValidator(fac.createMoveValidator("Horizonal"));
-    addMoveValidator(fac.createMoveValidator("Vertical"));
+    addMoveValidator(std::make_unique<HorizonalMoveValidator>());
+    addMoveValidator(std::make_unique<VerticalMoveValidator>());
 };
 
 Knight::Knight(Color color) : Piece(color)
 {
-    MoveValidatorFactory fac;
-
-    addMoveValidator(fac.createMoveValidator("Kight"));
+    addMoveValidator(std::make_unique<KightMoveValidator>());
 };
 
 Bishop::Bishop(Color color) : Piece(color)
 {
-    MoveValidatorFactory fac;
-
-    addMoveValidator(fac.createMoveValidator("Diagonal"));
+    addMoveValidator(std::make_unique<DiagonalMoveValidator>());
 };
 
 Queen::Queen(Color color) : Piece(color)
 {
-    MoveValidatorFactory fac;
-
-    addMoveValidator(fac.createMoveValidator("Horizonal"));
-    addMoveValidator(fac.createMoveValidator("Diagonal"));
-    addMoveValidator(fac.createMoveValidator("Vertical"));
+    addMoveValidator(std::make_unique<HorizonalMoveValidator>());
+    addMoveValidator(std::make_unique<DiagonalMoveValidator>());
+    addMoveValidator(std::make_unique<VerticalMoveValidator>());
 };
 
 King::King(Color color) : Piece(color)
 {
-    MoveValidatorFactory fac;
-
-    addMoveValidator(fac.createMoveValidator("Single"));
+    addMoveValidator(std::make_unique<SingleMoveValidator>());
 };

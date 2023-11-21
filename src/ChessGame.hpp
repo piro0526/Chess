@@ -20,8 +20,9 @@ private:
     PieceMetaData _metadata;
     IMoveHandler _moveHandler:
     AbstructStateChecker _stateChecker;
-    std::vector<>
+    std::vector<std::shared_ptr<GameStateCheck>> _checks;
 public:
+    ChessGame();
     void init();
     Move playTurn(Player player);
     Move getPlayerInput(Player player);
