@@ -19,10 +19,10 @@ void ChessGame::init()
 {
     _board = Board();
     _metadata = PieceMetadata();
-    _check.pushback(std::unique_ptr<CheckState>());
-    _check.pushback(std::unique_ptr<CheckMateState>());
-    _check.pushback(std::unique_ptr<StaleMateState>());
-    _stateChecker = std::unique_ptr<GameStateChecker>();
+    _checks.push_back(std::unique_ptr<CheckState>());
+    _checks.push_back(std::unique_ptr<CheckMateState>());
+    _checks.push_back(std::unique_ptr<StaleMateState>());
+    _stateChecker = std::move(std::unique_ptr<GameStateChecker>());
 
     std::unique_ptr<MoveHandler> reg = std::make_unique<RegularMoveHandler>();
     std::unique_ptr<MoveHandler> enPassant = std::make_unique<EnPassantMoveHandler>();

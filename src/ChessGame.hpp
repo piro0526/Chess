@@ -14,7 +14,7 @@ private:
     Board _board;
     PieceMetadata _metadata;
     std::unique_ptr<IMoveHandler> _moveHandler;
-    StateChecker _stateChecker;
+    std::unique_ptr<GameStateChecker> _stateChecker;
     std::vector<std::shared_ptr<GameStateCheck>> _checks;
     int _turns;
 public:
@@ -25,5 +25,6 @@ public:
     Move getPlayerInput(Player player);
     Spot parseCoordinates(std::string strCoodinates);
     void undo();
+    void start();
     Player swapPlayer(Player player);
 };
