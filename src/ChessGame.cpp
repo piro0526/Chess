@@ -3,15 +3,15 @@
 
 ChessGame::ChessGame()
 {
-    _whitePlayer = stdinPlayer(WHITE);
-    _blackPlayer = stdinPlayer(BLACK);
+    _whitePlayer = std::make_shared<stdinPlayer>(WHITE);
+    _blackPlayer = std::make_shared<stdinPlayer>(BLACK);
     init();
 };
 
-ChessGame::ChessGame(Player whitePlayer, Player blackPlayer)
+ChessGame::ChessGame(std::unique_ptr<Player> whitePlayer, std::unique_ptr<Player> blackPlayer)
 {
-    _whitePlayer = whitePlayer;
-    _blackPlayer = blackPlayer;
+    _whitePlayer = std::move(whitePlayer);
+    _blackPlayer = std::move(blackPlayer);
     init();
 };
 
@@ -36,19 +36,19 @@ void ChessGame::init()
 
 void ChessGame::start()
 {
-    Player _currentPlayer = _whitePlayer;
+    std::shared_ptr<Player> _currentPlayer = _whitePlayer;
     StateInfo gameState(0, "");
 
     while(gameState.getStateCode() <= 1)
     {
         viewBoard();
-        playTurn(currentPlayer);
-        gameState = _stateChecker.checkState(metadata, swapPlayers(currentPlayer).getColor());
+        playTurn(_currentPlayer);
+        gameState = _stateChecker->checkState(_metadata, swapPlayer(_currentPlayer)->getColor());
         if(gameState.getStateCode() != 0)
         {
             std::cout << gameState.getStateDescription() << std::endl;
         }
-        currentPlayer = swapPlayers(currentPlayer);
+        _currentPlayer = swapPlayer(_currentPlayer);
         if(gameState.getStateCode() == 2)
         {
             viewBoard();
@@ -56,31 +56,31 @@ void ChessGame::start()
     }
 };
 
-void ChessGame::playTurn(Player player)
+void ChessGame::playTurn(std::shared_ptr<Player> player)
 {
     Move move = getPlayerInput(player);
     Spot startSpot = move.getStart();
     Piece startPiece = *_board.getPiece(move.getStart());
     Piece endPiece = *_board.getPiece(move.getEnd());
     
-    if(_board.isSpotEmpty(startSpot) || !_board.getPiece(startSpot)->getColor() == player.getColor() || !_moveHandler.handlemove(_metadata, move))
+    if(_board.isSpotEmpty(startSpot) || !_board.getPiece(startSpot)->getColor() == player->getColor() || !_moveHandler->handleMove(_board, _metadata, move))
     {
         playTurn(player);
     }
     else
     {
-        StateInfo gameState = stateChecker.checkIlleagalState(metadata, player.getColor());
+        StateInfo gameState = _stateChecker->checkIllegalStates(_metadata, player->getColor());
         if(gameState.getStateCode() != 0)
         {
-            undo(move, startPiece, endPiece);
-            playturn(player);
+            undo();
+            playTurn(player);
         }
     }
 };
 
-Move ChessGame::getPlayerInput(Player player)
+Move ChessGame::getPlayerInput(std::shared_ptr<Player> player)
 {
-    return player.nextMove(_board.getFEN());
+    return player->nextMove(_board.getFEN());
 };
 
 Spot ChessGame::parseCoordinates(std::string strCoodinates)
@@ -95,9 +95,9 @@ void ChessGame::undo()
     _board.undo();
 };
 
-Player ChessGame::swapPlayer(Player player)
+std::shared_ptr<Player> ChessGame::swapPlayer(std::shared_ptr<Player> player)
 {
-    if(player.getColor() == WHITE)
+    if(player->getColor() == WHITE)
     {
         return _blackPlayer;
     }

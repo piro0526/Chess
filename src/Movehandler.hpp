@@ -1,5 +1,6 @@
 #pragma once
 #include "Board.hpp"
+#include "PieceMetadata.hpp"
 
 class IMoveHandler
 {
@@ -20,7 +21,7 @@ class CastlingMoveHandler : public MoveHandler
 {
 public:
     bool handleMove(Board& board, PieceMetadata metadata, Move move);
-    bool isCastlingMove(PieceMetadata metadata, Move move);
+    bool isCastlingMove(Board& board, PieceMetadata metadata, Move move);
 
 };
 
@@ -28,14 +29,14 @@ class EnPassantMoveHandler : public MoveHandler
 {
 public:
     bool handleMove(Board& board, PieceMetadata metadata, Move move);
-    bool isEnPassantMove(PieceMetadata metadata, Move move);
+    bool isEnPassantMove(Board& board, Move move);
 };
 
 class PromotionMoveHandler : public MoveHandler
 {
 public:
     bool handleMove(Board& board, PieceMetadata metadata, Move move);
-    bool isPromotionMove(PieceMetadata metadata, Move move);
+    bool isPromotionMove(Board& board, PieceMetadata metadata, Move move);
 };
 
 class RegularMoveHandler : public MoveHandler

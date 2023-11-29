@@ -138,7 +138,7 @@ bool PawnMoveValidator::isMoveValid(Board board, Move move) const
     {
         return true;
     }
-    if(fileDistance == side*2 && rankDistance == 0 && !board.getPiece(Spot(startSpot.getRank() + side, startSpot.getFile())) && !board.getPiece(startSpot)->hasBeenMoved())
+    if(fileDistance == side*2 && rankDistance == 0 && !board.getPiece(Spot(startSpot.getRank() + side, startSpot.getFile())) && board.getPiece(startSpot)->getMovedAmount()==0)
     {
         return true;
     }

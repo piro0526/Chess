@@ -5,12 +5,13 @@
 #include "Movehandler.hpp"
 #include "GameStateCheck.hpp"
 #include <vector>
+#include <iostream>
 
 
 class ChessGame
 {
 private:
-    Player _whitePlayer, _blackPlayer;
+    std::shared_ptr<Player> _whitePlayer, _blackPlayer;
     Board _board;
     PieceMetadata _metadata;
     std::unique_ptr<IMoveHandler> _moveHandler;
@@ -19,12 +20,12 @@ private:
     int _turns;
 public:
     ChessGame();
-    ChessGame(Player whitePlayer, Player _blackPlayer);
+    ChessGame(std::unique_ptr<Player> whitePlayer, std::unique_ptr<Player> _blackPlayer);
     void init();
-    void playTurn(Player player);
-    Move getPlayerInput(Player player);
+    void playTurn(std::shared_ptr<Player> player);
+    Move getPlayerInput(std::shared_ptr<Player> player);
     Spot parseCoordinates(std::string strCoodinates);
     void undo();
     void start();
-    Player swapPlayer(Player player);
+    std::shared_ptr<Player> swapPlayer(std::shared_ptr<Player> player);
 };

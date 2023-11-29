@@ -10,7 +10,7 @@ private:
     int _stateCode;
     std::string _stateDescription;
 public:
-    StateInfo(int stateCode, std::string stateMessage) : _stateCode(stateCode), _stateMessage(stateMessage){};
+    StateInfo(int stateCode, std::string stateDescription) : _stateCode(stateCode), _stateDescription(stateDescription){};
     int getStateCode();
     std::string getStateDescription();
     void setStateCode(int stateCode);

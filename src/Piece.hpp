@@ -1,7 +1,6 @@
 #pragma once
 #include "Board.hpp"
 #include "MoveValidator.hpp"
-#include "MoveValidatorFactory.hpp"
 
 typedef int Color;
 static const Color BLACK = -1;
@@ -22,7 +21,7 @@ public:
     void gotMoved();
     std::string getSymbol() const;
     Color getColor() const;
-    bool hasBeenMoved() const;
+    int getMovedAmount() const;
 };
 
 class Pawn : public Piece

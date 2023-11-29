@@ -44,10 +44,10 @@ Color Piece::getColor() const
     return _color;
 };
 
-bool Piece::hasBeenMoved() const
+int Piece::getMovedAmount() const
 {
-    return !_movedAmount;
-};
+    return _movedAmount;
+}
 
 
 Pawn::Pawn(Color color) : Piece(color)

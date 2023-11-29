@@ -1,5 +1,5 @@
 #pragma once
-#include "Move.hpp"
+#include "Piece.hpp"
 
 class Player
 {
@@ -9,6 +9,7 @@ public:
     Player() : Player(WHITE){};
     Player(Color color): _color(color){};
     virtual Move nextMove(std::string FEN){};
+    Color getColor();
 };
 
 class stdinPlayer : public Player
