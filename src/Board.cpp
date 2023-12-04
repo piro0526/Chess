@@ -109,13 +109,79 @@ int Board::getTurn() const
     return _turns;
 };
 
-std::string Borad::getFEN() const
+std::string Board::getFEN() const
 {
-    for(int f=0; f<BOARD_SIZE; f++)
+    for(int i=0; i<BOARD_SIZE^2; i++)
     {
-        for(int r=0; f<BOARD_SIZE; f++)
+        std::string fen = "";
+        std::string s = _rawBoard[i%BOARD_SIZE][i/BOARD_SIZE]->getSymbol();
+        Color b = _rawBoard[i%BOARD_SIZE][i/BOARD_SIZE]->getColor();
+
+        if(s=="Pawn")
         {
-            _rawBoard[r][f]
+            if(b==WHITE)
+            {
+                fen.push_back('P');
+            }
+            else if(b==BLACK)
+            {
+                fen.push_back('p');
+            }
+        }
+        else if(s=="Rook")
+        {
+            if(b==WHITE)
+            {
+                fen.push_back('R');
+            }
+            else if(b==BLACK)
+            {
+                fen.push_back('r');
+            }
+        }
+        else if(s=="Knight")
+        {
+            if(b==WHITE)
+            {
+                fen.push_back('K');
+            }
+            else if(b==BLACK)
+            {
+                fen.push_back('k');
+            }
+        }
+        else if(s=="Bishop")
+        {
+            if(b==WHITE)
+            {
+                fen.push_back('B');
+            }
+            else if(b==BLACK)
+            {
+                fen.push_back('b');
+            }
+        }
+        else if(s=="Queen")
+        {
+            if(b==WHITE)
+            {
+                fen.push_back('Q');
+            }
+            else if(b==BLACK)
+            {
+                fen.push_back('q');
+            }
+        }
+        else if(s=="King")
+        {
+            if(b==WHITE)
+            {
+                fen.push_back('K');
+            }
+            else if(b==BLACK)
+            {
+                fen.push_back('k');
+            }
         }
     }
 };
