@@ -7,7 +7,7 @@ StateInfo CheckState::getState(PieceMetadata metadata, Color color)
     Spot kingSpot = metadata.findKingLocation(color);
     if(metadata.isSpotThreatend(color, kingSpot))
     {
-        stateInfo.setStateDiscription(color + " is checked");
+        stateInfo.setStateDescription(color + " is checked");
         stateInfo.setStateCode(1);
     }
 
@@ -22,22 +22,22 @@ bool CheckState::isIllegalForCurrentPlayer()
 
 StateInfo CheckMateState::getState(PieceMetadata metadata, Color color)
 {
-    
+    return 
 };
 
 bool CheckMateState::isIllegalForCurrentPlayer()
 {
-    
+    return 
 };
 
 
 
 StateInfo StaleMateState::getState(PieceMetadata metadata, Color color)
 {
-    
+    return 
 };
 
 bool StaleMateState::isIllegalForCurrentPlayer()
 {
-    
+    return 
 };

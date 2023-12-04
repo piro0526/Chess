@@ -108,3 +108,14 @@ int Board::getTurn() const
 {
     return _turns;
 };
+
+std::string Borad::getFEN() const
+{
+    for(int f=0; f<BOARD_SIZE; f++)
+    {
+        for(int r=0; f<BOARD_SIZE; f++)
+        {
+            _rawBoard[r][f]
+        }
+    }
+};
