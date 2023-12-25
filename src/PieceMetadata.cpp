@@ -15,7 +15,7 @@ bool PieceMetadata::canPieceMove(Spot pieceSpot, Color color)
             Spot endSpot(r, f);
             if(_board.getPiece(pieceSpot)->getSymbol()=="King")
             {
-                if(isMoveValid(Move(pieceSpot, endSpot)) && !isSpotThreatend(color, endSpot))
+                if(isMoveValid(Move(pieceSpot, endSpot)) && !isSpotThreatened(color, endSpot))
                 {
                     return true;
                 }
@@ -30,7 +30,7 @@ bool PieceMetadata::canPieceMove(Spot pieceSpot, Color color)
     return false;
 };
 
-bool PieceMetadata::isSpotThreatend(Color defendingcolor, Spot defendingSpot)
+bool PieceMetadata::isSpotThreatened(Color defendingcolor, Spot defendingSpot)
 {
     for(int f=0; f<BOARD_SIZE; f++)
     {
