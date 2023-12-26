@@ -1,6 +1,6 @@
 #include "GameStateCheck.hpp"
 
-StateInfo CheckState::getState(PieceMetadata metadata, Color color)
+StateInfo CheckState::getState(Board board, PieceMetadata metadata, Color color)
 {
     StateInfo stateInfo(0, "");
 
@@ -20,7 +20,7 @@ bool CheckState::isIllegalForCurrentPlayer()
 };
 
 
-StateInfo CheckMateState::getState(PieceMetadata metadata, Color color)
+StateInfo CheckMateState::getState(Board board, PieceMetadata metadata, Color color)
 {
     StateInfo stateInfo = StateInfo(0, "");
     Spot kingSpot = metadata.findKingLocation(color);
@@ -51,7 +51,7 @@ bool CheckMateState::isIllegalForCurrentPlayer()
 
 
 
-StateInfo StaleMateState::getState(PieceMetadata metadata, Color color)
+StateInfo StaleMateState::getState(Board board, PieceMetadata metadata, Color color)
 {
     StateInfo stateInfo = StateInfo(0, "");
     Spot kingSpot = metadata.findKingLocation(color);
@@ -59,10 +59,10 @@ StateInfo StaleMateState::getState(PieceMetadata metadata, Color color)
     if (isChecked)
         return stateInfo;
 
-    for (int i = 0; i < board.getHeight(); i++)
-        for (int j = 0; j < board.getWidth(); j++) {
-            Piece piece = board.getPiece(Spot(i, j));
-            if (piece != nullptr && piece.getColor() == color && metadata.canPieceMove(Spot(i, j), color)) {
+    for (int i = 0; i < BOARD_SIZE; i++)
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            std::shared_ptr<Piece> piece = board.getPiece(Spot(i, j));
+            if (piece != nullptr && piece->getColor() == color && metadata.canPieceMove(Spot(i, j), color)) {
                 return stateInfo;
             }
         }
@@ -73,5 +73,5 @@ StateInfo StaleMateState::getState(PieceMetadata metadata, Color color)
 
 bool StaleMateState::isIllegalForCurrentPlayer()
 {
-    return ;
+    return false;
 };

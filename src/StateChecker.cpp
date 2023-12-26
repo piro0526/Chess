@@ -20,12 +20,12 @@ void StateInfo::setStateDescription(std::string stateDescription)
     _stateDescription = stateDescription;
 };
 
-StateInfo GameStateChecker::checkState(PieceMetadata metadata, Color color) const
+StateInfo GameStateChecker::checkState(Board board, PieceMetadata metadata, Color color) const
 {
     StateInfo highestPriorityState(-1, "");
     for(auto& gs: _checks)
     {
-        StateInfo currentState = gs->getState(metadata, color);
+        StateInfo currentState = gs->getState(board, metadata, color);
         if(currentState.getStateCode() > highestPriorityState.getStateCode())
         {
             highestPriorityState = currentState;
@@ -36,14 +36,14 @@ StateInfo GameStateChecker::checkState(PieceMetadata metadata, Color color) cons
 };
 
 
-StateInfo GameStateChecker::checkIllegalStates(PieceMetadata metadata, Color color) const
+StateInfo GameStateChecker::checkIllegalStates(Board board, PieceMetadata metadata, Color color) const
 {
     StateInfo highestPriorityState(-1, "");
     for(auto& gs: _checks)
     {
         if(gs->isIllegalForCurrentPlayer())
         {
-            StateInfo currentState = gs->getState(metadata, color);
+            StateInfo currentState = gs->getState(board, metadata, color);
             if(currentState.getStateCode() > highestPriorityState.getStateCode())
             {
                 highestPriorityState = currentState;

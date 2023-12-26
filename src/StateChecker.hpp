@@ -33,6 +33,6 @@ private:
     std::vector<std::unique_ptr<GameStateCheck>> _checks;
 public:
     GameStateChecker(std::vector<std::unique_ptr<GameStateCheck>> checks) : _checks(checks){};
-    StateInfo checkState(PieceMetadata metadata, Color color) const;
-    StateInfo checkIllegalStates(PieceMetadata metadata, Color color) const;
+    StateInfo checkState(Board board, PieceMetadata metadata, Color color) const;
+    StateInfo checkIllegalStates(Board board, PieceMetadata metadata, Color color) const;
 };

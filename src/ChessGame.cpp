@@ -41,9 +41,8 @@ void ChessGame::start()
 
     while(gameState.getStateCode() <= 1)
     {
-        viewBoard();
         playTurn(_currentPlayer);
-        gameState = _stateChecker->checkState(_metadata, swapPlayer(_currentPlayer)->getColor());
+        gameState = _stateChecker->checkState(_board, _metadata, swapPlayer(_currentPlayer)->getColor());
         if(gameState.getStateCode() != 0)
         {
             std::cout << gameState.getStateDescription() << std::endl;
@@ -60,8 +59,8 @@ void ChessGame::playTurn(std::shared_ptr<Player> player)
 {
     Move move = getPlayerInput(player);
     Spot startSpot = move.getStart();
-    Piece startPiece = *_board.getPiece(move.getStart());
-    Piece endPiece = *_board.getPiece(move.getEnd());
+    std::shared_ptr<Piece> startPiece = _board.getPiece(move.getStart());
+    std::shared_ptr<Piece> endPiece = _board.getPiece(move.getEnd());
     
     if(_board.isSpotEmpty(startSpot) || !_board.getPiece(startSpot)->getColor() == player->getColor() || !_moveHandler->handleMove(_board, _metadata, move))
     {
@@ -69,7 +68,7 @@ void ChessGame::playTurn(std::shared_ptr<Player> player)
     }
     else
     {
-        StateInfo gameState = _stateChecker->checkIllegalStates(_metadata, player->getColor());
+        StateInfo gameState = _stateChecker->checkIllegalStates(_board, _metadata, player->getColor());
         if(gameState.getStateCode() != 0)
         {
             undo();
@@ -92,7 +91,7 @@ Spot ChessGame::parseCoordinates(std::string strCoodinates)
 
 void ChessGame::undo()
 {
-    _board.undo();
+    return;
 };
 
 std::shared_ptr<Player> ChessGame::swapPlayer(std::shared_ptr<Player> player)
