@@ -1,4 +1,6 @@
 #include "Piece.hpp"
+#include "Board.hpp"
+#include "MoveValidator.hpp"
 
 
 Piece::Piece(Color color)
@@ -6,7 +8,7 @@ Piece::Piece(Color color)
     _color = color;
 };
 
-bool Piece::canMakeMove(Board board, Move move) const
+bool Piece::canMakeMove(Board& board, Move move) const
 {
     for(const auto& moveValidator : _moveVaridators)
     {

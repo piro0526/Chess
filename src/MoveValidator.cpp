@@ -1,7 +1,8 @@
 #include "MoveValidator.hpp"
+#include "Board.hpp"
 
 
-bool MoveValidator::isMoveValid(Board board, Move move) const
+bool MoveValidator::isMoveValid(Board& board, Move move) const
 {
     if(board.isOutofRange(move))
     {
@@ -20,7 +21,7 @@ bool MoveValidator::isMoveValid(Board board, Move move) const
 }
 
 
-bool DiagonalMoveValidator::isMoveValid(Board board, Move move) const
+bool DiagonalMoveValidator::isMoveValid(Board& board, Move move) const
 {
     if(!MoveValidator::isMoveValid(board, move))
     {
@@ -51,7 +52,7 @@ bool DiagonalMoveValidator::isMoveValid(Board board, Move move) const
     return true;
 };
 
-bool HorizonalMoveValidator::isMoveValid(Board board, Move move) const
+bool HorizonalMoveValidator::isMoveValid(Board& board, Move move) const
 {
     if(!MoveValidator::isMoveValid(board, move))
     {
@@ -81,7 +82,7 @@ bool HorizonalMoveValidator::isMoveValid(Board board, Move move) const
     return true;
 };
 
-bool VerticalMoveValidator::isMoveValid(Board board, Move move) const
+bool VerticalMoveValidator::isMoveValid(Board& board, Move move) const
 {
     if(!MoveValidator::isMoveValid(board, move))
     {
@@ -111,7 +112,7 @@ bool VerticalMoveValidator::isMoveValid(Board board, Move move) const
     return true;
 };
 
-bool PawnMoveValidator::isMoveValid(Board board, Move move) const
+bool PawnMoveValidator::isMoveValid(Board& board, Move move) const
 {
     if(!MoveValidator::isMoveValid(board, move))
     {
@@ -146,7 +147,7 @@ bool PawnMoveValidator::isMoveValid(Board board, Move move) const
     return false;
 };
 
-bool KightMoveValidator::isMoveValid(Board board, Move move) const
+bool KightMoveValidator::isMoveValid(Board& board, Move move) const
 {
     if(!MoveValidator::isMoveValid(board, move))
     {
@@ -166,7 +167,7 @@ bool KightMoveValidator::isMoveValid(Board board, Move move) const
     return true;
 };
 
-bool SingleMoveValidator::isMoveValid(Board board, Move move) const
+bool SingleMoveValidator::isMoveValid(Board& board, Move move) const
 {
     if(!MoveValidator::isMoveValid(board, move))
     {

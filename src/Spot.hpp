@@ -1,5 +1,4 @@
 #pragma once
-#include "Move.hpp"
 
 typedef int File;
 typedef int Rank;

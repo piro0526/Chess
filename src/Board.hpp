@@ -1,6 +1,5 @@
 #pragma once
-#include "Piece.hpp"
-#include "Spot.hpp"
+#include "Move.hpp"
 #include "PieceFactory.hpp"
 #include <string>
 #include <vector>
@@ -9,6 +8,9 @@
 #include <algorithm>
 
 static const int BOARD_SIZE = 8;
+
+class Piece;
+class MoveValidator;
 
 class Board
 {

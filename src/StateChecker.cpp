@@ -1,4 +1,5 @@
 #include "StateChecker.hpp"
+#include "GameStateCheck.hpp"
 
 int StateInfo::getStateCode()
 {
@@ -20,7 +21,12 @@ void StateInfo::setStateDescription(std::string stateDescription)
     _stateDescription = stateDescription;
 };
 
-StateInfo GameStateChecker::checkState(Board board, PieceMetadata metadata, Color color) const
+GameStateChecker::GameStateChecker(std::vector<std::unique_ptr<GameStateCheck>> checks)
+{
+    _checks = checks;
+};
+
+StateInfo GameStateChecker::checkState(Board& board, PieceMetadata metadata, Color color) const
 {
     StateInfo highestPriorityState(-1, "");
     for(auto& gs: _checks)
@@ -36,7 +42,7 @@ StateInfo GameStateChecker::checkState(Board board, PieceMetadata metadata, Colo
 };
 
 
-StateInfo GameStateChecker::checkIllegalStates(Board board, PieceMetadata metadata, Color color) const
+StateInfo GameStateChecker::checkIllegalStates(Board& board, PieceMetadata metadata, Color color) const
 {
     StateInfo highestPriorityState(-1, "");
     for(auto& gs: _checks)

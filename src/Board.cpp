@@ -1,4 +1,5 @@
 #include "Board.hpp"
+#include "Piece.hpp"
 
 Board::Board()
 {

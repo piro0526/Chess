@@ -1,13 +1,12 @@
 #pragma once
 #include "PieceMetadata.hpp"
-#include "StateChecker.hpp"
 
-
+class StateChecker;
 
 class GameStateCheck
 {
 public:
-    virtual StateInfo getState(Board board, PieceMetadata metadata, Color color) = 0;
+    virtual StateInfo getState(Board& board, PieceMetadata metadata, Color color) = 0;
     virtual bool isIllegalForCurrentPlayer() = 0;
 };
 
@@ -16,7 +15,7 @@ class CheckState : public GameStateCheck
 private:
     
 public:
-    StateInfo getState(Board board, PieceMetadata metadata, Color color);
+    StateInfo getState(Board& board, PieceMetadata metadata, Color color);
     bool isIllegalForCurrentPlayer();
 };
 
@@ -25,7 +24,7 @@ class CheckMateState : public GameStateCheck
 private:
     
 public:
-    StateInfo getState(Board board, PieceMetadata metadata, Color color);
+    StateInfo getState(Board& board, PieceMetadata metadata, Color color);
     bool isIllegalForCurrentPlayer();
 };
 
@@ -34,6 +33,6 @@ class StaleMateState : public GameStateCheck
 private:
     
 public:
-    StateInfo getState(Board board, PieceMetadata metadata, Color color);
+    StateInfo getState(Board& board, PieceMetadata metadata, Color color);
     bool isIllegalForCurrentPlayer();
 };

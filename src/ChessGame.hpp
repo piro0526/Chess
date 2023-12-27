@@ -16,7 +16,6 @@ private:
     PieceMetadata _metadata;
     std::unique_ptr<IMoveHandler> _moveHandler;
     std::unique_ptr<GameStateChecker> _stateChecker;
-    std::vector<std::shared_ptr<GameStateCheck>> _checks;
     int _turns;
 public:
     ChessGame();

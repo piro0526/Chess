@@ -1,10 +1,14 @@
 #pragma once
-#include "Board.hpp"
-#include "MoveValidator.hpp"
+#include <memory>
+#include <string>
+#include <vector>
 
 typedef int Color;
 static const Color BLACK = -1;
 static const Color WHITE = 1;
+
+class Board;
+class MoveValidator;
 
 class Piece
 {
@@ -15,7 +19,7 @@ protected:
     int _movedAmount;
 public:
     Piece(Color color) : _color(color){};
-    bool canMakeMove(Board board, Move move) const;
+    bool canMakeMove(Board& board, Move move) const;
     void addMoveValidator(std::shared_ptr<MoveValidator> moveValidator);
     bool isAllyPiece(std::shared_ptr<Piece> piece);
     void gotMoved();

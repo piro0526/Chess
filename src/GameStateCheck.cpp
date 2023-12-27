@@ -1,6 +1,7 @@
 #include "GameStateCheck.hpp"
+#include "StateChecker.hpp"
 
-StateInfo CheckState::getState(Board board, PieceMetadata metadata, Color color)
+StateInfo CheckState::getState(Board& board, PieceMetadata metadata, Color color)
 {
     StateInfo stateInfo(0, "");
 
@@ -20,7 +21,7 @@ bool CheckState::isIllegalForCurrentPlayer()
 };
 
 
-StateInfo CheckMateState::getState(Board board, PieceMetadata metadata, Color color)
+StateInfo CheckMateState::getState(Board& board, PieceMetadata metadata, Color color)
 {
     StateInfo stateInfo = StateInfo(0, "");
     Spot kingSpot = metadata.findKingLocation(color);
@@ -51,7 +52,7 @@ bool CheckMateState::isIllegalForCurrentPlayer()
 
 
 
-StateInfo StaleMateState::getState(Board board, PieceMetadata metadata, Color color)
+StateInfo StaleMateState::getState(Board& board, PieceMetadata metadata, Color color)
 {
     StateInfo stateInfo = StateInfo(0, "");
     Spot kingSpot = metadata.findKingLocation(color);
