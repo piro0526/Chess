@@ -8,7 +8,7 @@ private:
 public:
     Player() : Player(WHITE){};
     Player(Color color): _color(color){};
-    virtual Move nextMove(std::string FEN){};
+    virtual Move nextMove(std::string FEN){return Move();};
     Color getColor();
 };
 

@@ -23,7 +23,7 @@ void StateInfo::setStateDescription(std::string stateDescription)
 
 GameStateChecker::GameStateChecker(std::vector<std::unique_ptr<GameStateCheck>> checks)
 {
-    _checks = checks;
+    _checks = std::move(checks);
 };
 
 StateInfo GameStateChecker::checkState(Board& board, PieceMetadata metadata, Color color) const

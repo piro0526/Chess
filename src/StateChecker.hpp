@@ -1,8 +1,12 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <memory>
 
 class GameStateCheck;
+class Board;
+class PieceMetadata;
+typedef int Color;
 
 class StateInfo
 {

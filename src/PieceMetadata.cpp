@@ -76,5 +76,5 @@ Spot PieceMetadata::findKingLocation(Color color)
         }
     }
 
-    return ;
+    return Spot();
 };

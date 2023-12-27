@@ -2,6 +2,7 @@
 #include "PieceMetadata.hpp"
 
 class StateChecker;
+class StateInfo;
 
 class GameStateCheck
 {

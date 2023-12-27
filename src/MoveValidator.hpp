@@ -2,6 +2,7 @@
 #include <cstdlib>
 
 class Board;
+class Move;
 
 class MoveValidator
 {

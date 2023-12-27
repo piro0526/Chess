@@ -20,10 +20,10 @@ void ChessGame::init()
     _board = Board();
     _metadata = PieceMetadata();
     std::vector<std::unique_ptr<GameStateCheck>> checks;
-    checks.push_back(std::move(std::make_unique<CheckState>()));
-    checks.push_back(std::move(std::make_unique<CheckMateState>()));
-    checks.push_back(std::move(std::make_unique<StaleMateState>()));
-    _stateChecker = std::move(std::make_unique<GameStateChecker>(checks));
+    checks.emplace_back(std::move(std::make_unique<CheckState>()));
+    checks.emplace_back(std::move(std::make_unique<CheckMateState>()));
+    checks.emplace_back(std::move(std::make_unique<StaleMateState>()));
+    _stateChecker = std::move(std::make_unique<GameStateChecker>(std::move(checks)));
 
     std::unique_ptr<MoveHandler> reg = std::make_unique<RegularMoveHandler>();
     std::unique_ptr<MoveHandler> enPassant = std::make_unique<EnPassantMoveHandler>();
@@ -86,7 +86,7 @@ Move ChessGame::getPlayerInput(std::shared_ptr<Player> player)
 
 Spot ChessGame::parseCoordinates(std::string strCoodinates)
 {
-    int x = int(strCoodinates[0]) - int("a");
+    int x = strCoodinates[0] - 'a';
     int y = int(strCoodinates[1]);
     return Spot(x, y);
 };

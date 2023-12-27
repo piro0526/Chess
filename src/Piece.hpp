@@ -1,4 +1,5 @@
 #pragma once
+#include "Move.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,7 +19,7 @@ protected:
     std::vector<std::shared_ptr<MoveValidator>> _moveVaridators;
     int _movedAmount;
 public:
-    Piece(Color color) : _color(color){};
+    Piece(Color color);
     bool canMakeMove(Board& board, Move move) const;
     void addMoveValidator(std::shared_ptr<MoveValidator> moveValidator);
     bool isAllyPiece(std::shared_ptr<Piece> piece);
