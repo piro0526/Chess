@@ -2,7 +2,7 @@
 #include "PieceMetadata.hpp"
 #include "StateChecker.hpp"
 #include "Player.hpp"
-#include "Movehandler.hpp"
+#include "MoveHandler.hpp"
 #include "GameStateCheck.hpp"
 #include <vector>
 #include <iostream>
@@ -25,7 +25,7 @@ public:
     void playTurn(std::shared_ptr<Player> player);
     Move getPlayerInput(std::shared_ptr<Player> player);
     Spot parseCoordinates(std::string strCoodinates);
-    void undo();
+    void undo(Move move, std::shared_ptr<Piece> startPiece, std::shared_ptr<Piece> endPiece);
     void start();
     std::shared_ptr<Player> swapPlayer(std::shared_ptr<Player> player);
 };

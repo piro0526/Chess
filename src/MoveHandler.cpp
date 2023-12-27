@@ -1,4 +1,4 @@
-#include "Movehandler.hpp"
+#include "MoveHandler.hpp"
 
 void MoveHandler::setNext(std::unique_ptr<IMoveHandler> nextMoveHandler)
 {
@@ -47,7 +47,7 @@ bool CastlingMoveHandler::isCastlingMove(Board& board, PieceMetadata metadata, M
     {
         Rank rank = startSpot.getRank();
         File file = startSpot.getFile() + 1 * direction;
-        if(metadata.isSpotThreatend(piece1->getColor(), Spot(rank, file)) || (!board.isSpotEmpty(Spot(rank, file)) && file != startSpot.getFile() && file != endSpot.getFile()))
+        if(metadata.isSpotThreatened(piece1->getColor(), Spot(rank, file)) || (!board.isSpotEmpty(Spot(rank, file)) && file != startSpot.getFile() && file != endSpot.getFile()))
         {
             return false;
         }

@@ -111,9 +111,9 @@ int Board::getTurn() const
 
 std::string Board::getFEN() const
 {
+    std::string fen = "";
     for(int i=0; i<BOARD_SIZE^2; i++)
     {
-        std::string fen = "";
         std::string s = _rawBoard[i%BOARD_SIZE][i/BOARD_SIZE]->getSymbol();
         Color b = _rawBoard[i%BOARD_SIZE][i/BOARD_SIZE]->getColor();
 
@@ -184,4 +184,6 @@ std::string Board::getFEN() const
             }
         }
     }
+
+    return fen;
 };

@@ -50,7 +50,8 @@ void ChessGame::start()
         _currentPlayer = swapPlayer(_currentPlayer);
         if(gameState.getStateCode() == 2)
         {
-            viewBoard();
+            std::cout << "GG" << std::endl;
+            //viewBoard();
         }
     }
 };
@@ -71,7 +72,7 @@ void ChessGame::playTurn(std::shared_ptr<Player> player)
         StateInfo gameState = _stateChecker->checkIllegalStates(_board, _metadata, player->getColor());
         if(gameState.getStateCode() != 0)
         {
-            undo();
+            undo(move, startPiece, endPiece);
             playTurn(player);
         }
     }
@@ -89,9 +90,12 @@ Spot ChessGame::parseCoordinates(std::string strCoodinates)
     return Spot(x, y);
 };
 
-void ChessGame::undo()
+void ChessGame::undo(Move move, std::shared_ptr<Piece> startPiece, std::shared_ptr<Piece> endPiece)
 {
-    return;
+    if (endPiece != nullptr)
+            _board.unCapturePiece(endPiece);
+        _board.setPiece(startPiece, move.getStart());
+        _board.setPiece(endPiece, move.getEnd());
 };
 
 std::shared_ptr<Player> ChessGame::swapPlayer(std::shared_ptr<Player> player)
