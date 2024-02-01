@@ -1,11 +1,11 @@
 #pragma once
+#include "PieceMetadata.hpp"
 #include <vector>
 #include <string>
 #include <memory>
 
 class GameStateCheck;
 class Board;
-class PieceMetadata;
 typedef int Color;
 
 class StateInfo
@@ -27,8 +27,8 @@ class StateChecker
 {
 private:
 public:
-    virtual StateInfo checkState(Board& board, PieceMetadata metadata, Color color) const;
-    virtual StateInfo checkIllegalStates(Board& board, PieceMetadata metadata, Color color) const;
+    virtual StateInfo checkState(Board& board, PieceMetadata& metadata, Color color) const {return StateInfo(0, "");};
+    virtual StateInfo checkIllegalStates(Board& board, PieceMetadata& metadata, Color color) const {return StateInfo(0, "");};
 };
 
 class GameStateChecker : public StateChecker
@@ -37,6 +37,6 @@ private:
     std::vector<std::unique_ptr<GameStateCheck>> _checks;
 public:
     GameStateChecker(std::vector<std::unique_ptr<GameStateCheck>> checks);
-    StateInfo checkState(Board& board, PieceMetadata metadata, Color color) const;
-    StateInfo checkIllegalStates(Board& board, PieceMetadata metadata, Color color) const;
+    StateInfo checkState(Board& board, PieceMetadata& metadata, Color color) const;
+    StateInfo checkIllegalStates(Board& board, PieceMetadata& metadata, Color color) const;
 };

@@ -1,9 +1,10 @@
 #include "PieceMetadata.hpp"
+#include <iostream>
 
 
 bool PieceMetadata::canPieceMove(Spot pieceSpot, Color color)
 {
-    if(_board.isSpotEmpty(pieceSpot))
+    if(_board->isSpotEmpty(pieceSpot))
     {
         return false;
     }
@@ -13,7 +14,7 @@ bool PieceMetadata::canPieceMove(Spot pieceSpot, Color color)
         for(int r=0; r<BOARD_SIZE; r++)
         {
             Spot endSpot(r, f);
-            if(_board.getPiece(pieceSpot)->getSymbol()=="King")
+            if(_board->getPiece(pieceSpot)->getSymbol()=="King")
             {
                 if(isMoveValid(Move(pieceSpot, endSpot)) && !isSpotThreatened(color, endSpot))
                 {
@@ -37,11 +38,13 @@ bool PieceMetadata::isSpotThreatened(Color defendingcolor, Spot defendingSpot)
         for(int r=0; r<BOARD_SIZE; r++)
         {
             Spot enemySpot(r, f);
-            std::shared_ptr<Piece> enemyPiece = _board.getPiece(enemySpot);
+            std::shared_ptr<Piece> enemyPiece = _board->getPiece(enemySpot);
 
-            if(!_board.isSpotEmpty(enemySpot) && enemyPiece->getColor() == -defendingcolor && isMoveValid(Move(enemySpot, defendingSpot)))
+            if(!_board->isSpotEmpty(enemySpot))
             {
-                return true;
+                if(enemyPiece->getColor() == -defendingcolor && isMoveValid(Move(enemySpot, defendingSpot))){
+                    return true;
+                }
             }
         }
     }
@@ -51,14 +54,16 @@ bool PieceMetadata::isSpotThreatened(Color defendingcolor, Spot defendingSpot)
 
 bool PieceMetadata::isMoveValid(Move move)
 {
-    std::shared_ptr<Piece> piece = _board.getPiece(move.getStart());
+    std::shared_ptr<Piece> piece = _board->getPiece(move.getStart());
 
-    if(_board.isSpotEmpty(move.getStart()))
+    if(_board->isSpotEmpty(move.getStart()))
     {
+        std::cout << "!empty!" << std::endl;
+        std::cout << (piece == nullptr) << std::endl;
         return false;
     }
 
-    return piece->canMakeMove(_board, move);
+    return piece->canMakeMove(*_board, move);
 };
 
 Spot PieceMetadata::findKingLocation(Color color)
@@ -67,11 +72,14 @@ Spot PieceMetadata::findKingLocation(Color color)
     {
         for(int r=0; r<BOARD_SIZE; r++)
         {
-            std::shared_ptr<Piece> temp = _board.getPiece(Spot(r, f));
+            std::shared_ptr<Piece> temp = _board->getPiece(Spot(r, f));
 
-            if(temp->getSymbol() == "King" && temp->getColor() == color)
+            if(temp != nullptr)
             {
-                return Spot(r, f);
+                if(temp->getSymbol() == "King" && temp->getColor() == color)
+                {
+                    return Spot(r, f);
+                }
             }
         }
     }

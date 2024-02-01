@@ -22,7 +22,7 @@ void Board::initBoard()
     {
         for(int j=0; j<BOARD_SIZE; j++)
         {
-            setPiece(fac.createPiece(_configuretion[i][j], WHITE), Spot(1 - i, j));
+            setPiece(fac.createPiece(_configuretion[i][j], WHITE), Spot(j, 1 - i));
         }
     }
 
@@ -30,7 +30,7 @@ void Board::initBoard()
     {
         for(int j=0; j<BOARD_SIZE; j++)
         {
-            setPiece(fac.createPiece(_configuretion[i][j], BLACK), Spot(BOARD_SIZE - 2 + i, j));
+            setPiece(fac.createPiece(_configuretion[i][j], BLACK), Spot(j ,BOARD_SIZE - 2 + i));
         }
     }
 };
@@ -76,6 +76,7 @@ bool Board::movePiece(Move move)
     }
     
     setPiece(piece, move.getEnd());
+    setPiece(nullptr, move.getStart());
 
     return true;
 };
@@ -110,81 +111,109 @@ int Board::getTurn() const
     return _turns;
 };
 
-std::string Board::getFEN() const
+std::string Board::getFEN()
 {
     std::string fen = "";
-    for(int i=0; i<BOARD_SIZE^2; i++)
+    int empty_cnt = 0;
+    for(int f=BOARD_SIZE-1; f>=0; f--)
     {
-        std::string s = _rawBoard[i%BOARD_SIZE][i/BOARD_SIZE]->getSymbol();
-        Color b = _rawBoard[i%BOARD_SIZE][i/BOARD_SIZE]->getColor();
+        empty_cnt = 0;
+        for(int r=0; r<BOARD_SIZE; r++)
+        {
+            if(getPiece(Spot(r, f)) == nullptr)
+            {
+                empty_cnt++;
+                continue;
+            }
 
-        if(s=="Pawn")
-        {
-            if(b==WHITE)
+            if(empty_cnt>0)
             {
-                fen.push_back('P');
+                fen.push_back(empty_cnt+'0');
+                empty_cnt = 0;
             }
-            else if(b==BLACK)
+
+            std::string s = getPiece(Spot(r, f))->getSymbol();
+            Color b = getPiece(Spot(r, f))->getColor();
+
+
+            if(s=="Pawn")
             {
-                fen.push_back('p');
+                if(b==WHITE)
+                {
+                    fen.push_back('P');
+                }
+                else if(b==BLACK)
+                {
+                    fen.push_back('p');
+                }
+            }
+            else if(s=="Rook")
+            {
+                if(b==WHITE)
+                {
+                    fen.push_back('R');
+                }
+                else if(b==BLACK)
+                {
+                    fen.push_back('r');
+                }
+            }
+            else if(s=="Knight")
+            {
+                if(b==WHITE)
+                {
+                    fen.push_back('N');
+                }
+                else if(b==BLACK)
+                {
+                    fen.push_back('n');
+                }
+            }
+            else if(s=="Bishop")
+            {
+                if(b==WHITE)
+                {
+                    fen.push_back('B');
+                }
+                else if(b==BLACK)
+                {
+                    fen.push_back('b');
+                }
+            }
+            else if(s=="Queen")
+            {
+                if(b==WHITE)
+                {
+                    fen.push_back('Q');
+                }
+                else if(b==BLACK)
+                {
+                    fen.push_back('q');
+                }
+            }
+            else if(s=="King")
+            {
+                if(b==WHITE)
+                {
+                    fen.push_back('K');
+                }
+                else if(b==BLACK)
+                {
+                    fen.push_back('k');
+                }
             }
         }
-        else if(s=="Rook")
+
+        if(empty_cnt > 0)
         {
-            if(b==WHITE)
-            {
-                fen.push_back('R');
-            }
-            else if(b==BLACK)
-            {
-                fen.push_back('r');
-            }
+            fen.push_back(empty_cnt+'0');
+            empty_cnt = 0;
         }
-        else if(s=="Knight")
+
+        if(f != 0)
         {
-            if(b==WHITE)
-            {
-                fen.push_back('K');
-            }
-            else if(b==BLACK)
-            {
-                fen.push_back('k');
-            }
-        }
-        else if(s=="Bishop")
-        {
-            if(b==WHITE)
-            {
-                fen.push_back('B');
-            }
-            else if(b==BLACK)
-            {
-                fen.push_back('b');
-            }
-        }
-        else if(s=="Queen")
-        {
-            if(b==WHITE)
-            {
-                fen.push_back('Q');
-            }
-            else if(b==BLACK)
-            {
-                fen.push_back('q');
-            }
-        }
-        else if(s=="King")
-        {
-            if(b==WHITE)
-            {
-                fen.push_back('K');
-            }
-            else if(b==BLACK)
-            {
-                fen.push_back('k');
-            }
+            fen.push_back('/');
         }
     }
-
     return fen;
 };

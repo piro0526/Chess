@@ -4,27 +4,27 @@ std::unique_ptr<Piece> PieceFactory::createPiece(std::string pieceType, Color co
 {
     if(pieceType == "Pawn")
     {
-        return std::unique_ptr<Piece>(new Pawn(color));
+        return std::make_unique<Pawn>(color);
     }
     else if(pieceType == "Rook")
     {
-        return std::unique_ptr<Piece>(new Rook(color));
+        return std::make_unique<Rook>(color);
     }
     else if(pieceType == "Knight")
     {
-        return std::unique_ptr<Piece>(new Knight(color));
+        return std::make_unique<Knight>(color);
     }
     else if(pieceType == "Bishop")
     {
-        return std::unique_ptr<Piece>(new Bishop(color));
+        return std::make_unique<Bishop>(color);
     }
     else if(pieceType == "Queen")
     {
-        return std::unique_ptr<Piece>(new Queen(color));
+        return std::make_unique<Queen>(color);
     }
     else if(pieceType == "King")
     {
-        return std::unique_ptr<Piece>(new King(color));
+        return std::make_unique<King>(color);
     }
     else
     {

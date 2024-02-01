@@ -1,7 +1,7 @@
 #include "GameStateCheck.hpp"
 #include "StateChecker.hpp"
 
-StateInfo CheckState::getState(Board& board, PieceMetadata metadata, Color color)
+StateInfo CheckState::getState(Board& board, PieceMetadata& metadata, Color color)
 {
     StateInfo stateInfo(0, "");
 
@@ -21,7 +21,7 @@ bool CheckState::isIllegalForCurrentPlayer()
 };
 
 
-StateInfo CheckMateState::getState(Board& board, PieceMetadata metadata, Color color)
+StateInfo CheckMateState::getState(Board& board, PieceMetadata& metadata, Color color)
 {
     StateInfo stateInfo = StateInfo(0, "");
     Spot kingSpot = metadata.findKingLocation(color);
@@ -34,8 +34,7 @@ StateInfo CheckMateState::getState(Board& board, PieceMetadata metadata, Color c
             if (i == 0 && j == 0)
                 continue;
             Spot next = Spot(kingSpot.getRank() + i, kingSpot.getFile() + j);
-            if (metadata.isMoveValid(Move(kingSpot, next))
-                    && !metadata.isSpotThreatened(color, next)) {
+            if (metadata.isMoveValid(Move(kingSpot, next)) && !metadata.isSpotThreatened(color, next)) {
                 return stateInfo;
             }
         }
@@ -52,7 +51,7 @@ bool CheckMateState::isIllegalForCurrentPlayer()
 
 
 
-StateInfo StaleMateState::getState(Board& board, PieceMetadata metadata, Color color)
+StateInfo StaleMateState::getState(Board& board, PieceMetadata& metadata, Color color)
 {
     StateInfo stateInfo = StateInfo(0, "");
     Spot kingSpot = metadata.findKingLocation(color);
@@ -63,8 +62,11 @@ StateInfo StaleMateState::getState(Board& board, PieceMetadata metadata, Color c
     for (int i = 0; i < BOARD_SIZE; i++)
         for (int j = 0; j < BOARD_SIZE; j++) {
             std::shared_ptr<Piece> piece = board.getPiece(Spot(i, j));
-            if (piece != nullptr && piece->getColor() == color && metadata.canPieceMove(Spot(i, j), color)) {
-                return stateInfo;
+            if (piece != nullptr) {
+                if(piece->getColor() == color && metadata.canPieceMove(Spot(i, j), color))
+                {
+                    return stateInfo;
+                }
             }
         }
     stateInfo.setStateDescription("STALEMATE\nDRAW");

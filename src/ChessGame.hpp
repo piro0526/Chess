@@ -6,6 +6,7 @@
 #include "GameStateCheck.hpp"
 #include <vector>
 #include <iostream>
+#include <map>
 
 
 class ChessGame
@@ -21,8 +22,9 @@ public:
     ChessGame();
     ChessGame(std::unique_ptr<Player> whitePlayer, std::unique_ptr<Player> _blackPlayer);
     void init();
-    void playTurn(std::shared_ptr<Player> player);
-    Move getPlayerInput(std::shared_ptr<Player> player);
+    std::string playTurn(std::shared_ptr<Player> player, std::string error);
+    std::string getPlayerInput(std::shared_ptr<Player> player, std::string command, std::string error);
+    std::string promotion(std::shared_ptr<Player> player, std::string error);
     Spot parseCoordinates(std::string strCoodinates);
     void undo(Move move, std::shared_ptr<Piece> startPiece, std::shared_ptr<Piece> endPiece);
     void start();

@@ -7,15 +7,17 @@ bool MoveValidator::isMoveValid(Board& board, Move move) const
     if(board.isOutofRange(move))
     {
         return false;
-    };
+    }
+
     if(board.isSpotEmpty(move.getStart()))
     {
         return false;
-    };
+    }
+
     if(board.getPiece(move.getStart())->isAllyPiece(board.getPiece(move.getEnd())))
     {
         return false;
-    };
+    }
 
     return true;
 }
@@ -26,7 +28,7 @@ bool DiagonalMoveValidator::isMoveValid(Board& board, Move move) const
     if(!MoveValidator::isMoveValid(board, move))
     {
         return false;
-    };
+    }
     
     Spot startSpot = move.getStart();
     Spot endSpot = move.getEnd();
@@ -57,7 +59,7 @@ bool HorizonalMoveValidator::isMoveValid(Board& board, Move move) const
     if(!MoveValidator::isMoveValid(board, move))
     {
         return false;
-    };
+    }
     
     Spot startSpot = move.getStart();
     Spot endSpot = move.getEnd();
@@ -87,7 +89,7 @@ bool VerticalMoveValidator::isMoveValid(Board& board, Move move) const
     if(!MoveValidator::isMoveValid(board, move))
     {
         return false;
-    };
+    }
     
     Spot startSpot = move.getStart();
     Spot endSpot = move.getEnd();
@@ -117,29 +119,24 @@ bool PawnMoveValidator::isMoveValid(Board& board, Move move) const
     if(!MoveValidator::isMoveValid(board, move))
     {
         return false;
-    };
+    }
     
     Spot startSpot = move.getStart();
     Spot endSpot = move.getEnd();
-    int rankDistance = move.getEnd().getRank()-move.getStart().getRank();
-    int fileDistance = move.getEnd().getFile()-move.getStart().getFile();
-
-    if(abs(fileDistance) == 1 || abs(fileDistance) == 2)
-    {
-        return false;
-    }
+    int rankDistance = endSpot.getRank()-startSpot.getRank();
+    int fileDistance = endSpot.getFile()-startSpot.getFile();
 
     int side = board.getPiece(startSpot)->getColor();
 
-    if(fileDistance == side && abs(rankDistance) == 1 && board.getPiece(endSpot))
+    if(fileDistance == side && std::abs(rankDistance) == 1 && !board.isSpotEmpty(endSpot))
     {
         return true;
     }
-    if(fileDistance == side && rankDistance == 0 && !board.getPiece(endSpot))
+    if(fileDistance == side && rankDistance == 0 && board.isSpotEmpty(endSpot))
     {
         return true;
     }
-    if(fileDistance == side*2 && rankDistance == 0 && !board.getPiece(Spot(startSpot.getRank() + side, startSpot.getFile())) && board.getPiece(startSpot)->getMovedAmount()==0)
+    if(fileDistance == side*2 && rankDistance == 0 && board.isSpotEmpty(Spot(startSpot.getRank(), startSpot.getFile() + side)) && board.getPiece(startSpot)->getMovedAmount()==0)
     {
         return true;
     }
@@ -152,7 +149,7 @@ bool KightMoveValidator::isMoveValid(Board& board, Move move) const
     if(!MoveValidator::isMoveValid(board, move))
     {
         return false;
-    };
+    }
     
     Spot startSpot = move.getStart();
     Spot endSpot = move.getEnd();
@@ -172,14 +169,14 @@ bool SingleMoveValidator::isMoveValid(Board& board, Move move) const
     if(!MoveValidator::isMoveValid(board, move))
     {
         return false;
-    };
+    }
     
     Spot startSpot = move.getStart();
     Spot endSpot = move.getEnd();
     int rankDistance = move.getEnd().getRank()-move.getStart().getRank();
     int fileDistance = move.getEnd().getFile()-move.getStart().getFile();
 
-    if(abs(rankDistance) > 1 && abs(fileDistance) > 1)
+    if(abs(rankDistance) > 1 || abs(fileDistance) > 1)
     {
         return false;
     }

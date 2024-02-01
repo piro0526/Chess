@@ -5,7 +5,7 @@ void MoveHandler::setNext(std::unique_ptr<IMoveHandler> nextMoveHandler)
     _nextMoveHandler = std::move(nextMoveHandler);
 };
 
-bool CastlingMoveHandler::handleMove(Board& board, PieceMetadata metadata, Move move)
+bool CastlingMoveHandler::handleMove(Board& board, PieceMetadata& metadata, Move move)
 {
     if(isCastlingMove(board, metadata, move))
     {
@@ -18,20 +18,26 @@ bool CastlingMoveHandler::handleMove(Board& board, PieceMetadata metadata, Move 
         board.movePiece(rookMove);
         board.movePiece(kingMove);
 
+
         return true;
     }
     if(_nextMoveHandler != nullptr)
     {
         return _nextMoveHandler->handleMove(board, metadata, move);
     }
+
     
     return false;
 };
 
-bool CastlingMoveHandler::isCastlingMove(Board& board, PieceMetadata metadata, Move move)
+bool CastlingMoveHandler::isCastlingMove(Board& board, PieceMetadata& metadata, Move move)
 {
     Spot startSpot = move.getStart();
     Spot endSpot = move.getEnd();
+    if(board.isSpotEmpty(endSpot))
+    {
+        return false;
+    }
     std::shared_ptr<Piece> piece1 = board.getPiece(startSpot);
     std::shared_ptr<Piece> piece2 = board.getPiece(endSpot);
 
@@ -43,7 +49,7 @@ bool CastlingMoveHandler::isCastlingMove(Board& board, PieceMetadata metadata, M
     int yDistance = endSpot.getFile() - startSpot.getFile();
     int direction = yDistance > 0 ? 1 : -1;
 
-    for(int i=0; i<0; i++)
+    for(int i=0; i<4; i++)
     {
         Rank rank = startSpot.getRank();
         File file = startSpot.getFile() + 1 * direction;
@@ -56,7 +62,7 @@ bool CastlingMoveHandler::isCastlingMove(Board& board, PieceMetadata metadata, M
     return true;
 };
 
-bool EnPassantMoveHandler::handleMove(Board& board, PieceMetadata metadata, Move move)
+bool EnPassantMoveHandler::handleMove(Board& board, PieceMetadata& metadata, Move move)
 {
     if(isEnPassantMove(board, move))
     {
@@ -71,6 +77,8 @@ bool EnPassantMoveHandler::handleMove(Board& board, PieceMetadata metadata, Move
     {
         return _nextMoveHandler->handleMove(board, metadata, move);
     }
+
+
     
     return false;
 };
@@ -110,19 +118,10 @@ bool EnPassantMoveHandler::isEnPassantMove(Board& board, Move move)
     return true;
 }
 
-bool PromotionMoveHandler::handleMove(Board& board, PieceMetadata metadata, Move move)
+bool PromotionMoveHandler::handleMove(Board& board, PieceMetadata& metadata, Move move)
 {
     if(isPromotionMove(board, metadata, move))
     {
-        int rank = move.getStart().getRank();
-        int file = move.getStart().getFile();
-        int yDistance = move.getStart().getFile() - move.getEnd().getFile();
-        int direction = yDistance < 0 ? 1 : -1;
-        Move rookMove(move.getEnd(), Spot(rank, file + direction));
-        Move kingMove(move.getEnd(), Spot(rank, file + 3 * direction));
-        board.movePiece(rookMove);
-        board.movePiece(kingMove);
-
         return true;
     }
     if(_nextMoveHandler != nullptr)
@@ -133,7 +132,7 @@ bool PromotionMoveHandler::handleMove(Board& board, PieceMetadata metadata, Move
     return false;
 };
 
-bool PromotionMoveHandler::isPromotionMove(Board& board, PieceMetadata metadata, Move move)
+bool PromotionMoveHandler::isPromotionMove(Board& board, PieceMetadata& metadata, Move move)
 {
     if(!metadata.isMoveValid(move))
     {
@@ -154,8 +153,9 @@ bool PromotionMoveHandler::isPromotionMove(Board& board, PieceMetadata metadata,
     return endSpot.getFile() == edge;
 };
 
-bool RegularMoveHandler::handleMove(Board& board, PieceMetadata metadata, Move move)
+bool RegularMoveHandler::handleMove(Board& board, PieceMetadata& metadata, Move move)
 {
+    
     if (metadata.isMoveValid(move) && !board.getPiece(move.getStart())->isAllyPiece(board.getPiece(move.getEnd())))
     {
         board.movePiece(move);
@@ -165,6 +165,6 @@ bool RegularMoveHandler::handleMove(Board& board, PieceMetadata metadata, Move m
     {
         return _nextMoveHandler->handleMove(board, metadata, move);
     }
-    
+
     return false;
 };

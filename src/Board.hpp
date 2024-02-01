@@ -37,5 +37,5 @@ public:
     void viewBoard();
     std::shared_ptr<Piece> getPiece(Spot spot) const;
     int getTurn() const;
-    std::string getFEN() const;
+    std::string getFEN();
 };

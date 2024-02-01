@@ -21,7 +21,7 @@ protected:
 public:
     Piece(Color color);
     bool canMakeMove(Board& board, Move move) const;
-    void addMoveValidator(std::shared_ptr<MoveValidator> moveValidator);
+    void addMoveValidator(std::unique_ptr<MoveValidator> moveValidator);
     bool isAllyPiece(std::shared_ptr<Piece> piece);
     void gotMoved();
     std::string getSymbol() const;

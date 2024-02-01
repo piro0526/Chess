@@ -17,5 +17,5 @@ Spot Move::getStart()
 
 Spot Move::getEnd()
 {
-    return _startSpot;
+    return _endSpot;
 };
