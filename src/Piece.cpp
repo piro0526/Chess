@@ -5,92 +5,91 @@
 
 Piece::Piece(Color color)
 {
-    _color = color;
+    color_ = color;
 };
 
-bool Piece::canMakeMove(Board& board, Move move) const
+bool Piece::CanMakeMove(Board& board, Move move) const
 {
-    for(const auto& moveValidator : _moveVaridators)
+    for(const auto& moveValidator : move_varidators_)
     {
-        if(moveValidator->isMoveValid(board, move))
+        if(moveValidator->IsMoveValid(board, move))
         {
             return true;
         }
     }
-    
     return false;
 };
 
-void Piece::addMoveValidator(std::unique_ptr<MoveValidator> moveValidator)
+void Piece::AddMoveValidator(std::unique_ptr<MoveValidator> moveValidator)
 {
-    _moveVaridators.emplace_back(std::move(moveValidator));
+    move_varidators_.emplace_back(std::move(moveValidator));
 };
 
-bool Piece::isAllyPiece(std::shared_ptr<Piece> piece)
+bool Piece::IsAllyPiece(std::shared_ptr<Piece> piece)
 {
     if(piece == nullptr)
     {
         return false;
     }
-    return _color == piece->getColor();
+    return color_ == piece->get_color();
 };
 
-void Piece::gotMoved()
+void Piece::GotMoved()
 {
-    _movedAmount++;
+    moved_amount_++;
 };
 
-std::string Piece::getSymbol() const
+std::string Piece::get_symbol() const
 {
-    return _symbol;
+    return symbol_;
 };
 
-Color Piece::getColor() const
+Color Piece::get_color() const
 {
-    return _color;
+    return color_;
 };
 
-int Piece::getMovedAmount() const
+int Piece::get_moved_amount() const
 {
-    return _movedAmount;
+    return moved_amount_;
 }
 
 
 Pawn::Pawn(Color color) : Piece(color)
 {
-    _symbol = "Pawn";
-    addMoveValidator(std::move(std::make_unique<PawnMoveValidator>()));
+    symbol_ = "Pawn";
+    AddMoveValidator(std::move(std::make_unique<PawnMoveValidator>()));
 };
 
 Rook::Rook(Color color) : Piece(color)
 {
-    _symbol = "Rook";
-    addMoveValidator(std::move(std::make_unique<HorizonalMoveValidator>()));
-    addMoveValidator(std::move(std::make_unique<VerticalMoveValidator>()));
+    symbol_ = "Rook";
+    AddMoveValidator(std::move(std::make_unique<HorizonalMoveValidator>()));
+    AddMoveValidator(std::move(std::make_unique<VerticalMoveValidator>()));
 };
 
 Knight::Knight(Color color) : Piece(color)
 {
-    _symbol = "Knight";
-    addMoveValidator(std::move(std::make_unique<KightMoveValidator>()));
+    symbol_ = "Knight";
+    AddMoveValidator(std::move(std::make_unique<KightMoveValidator>()));
 };
 
 Bishop::Bishop(Color color) : Piece(color)
 {
-    _symbol = "Bishop";
-    addMoveValidator(std::move(std::make_unique<DiagonalMoveValidator>()));
+    symbol_ = "Bishop";
+    AddMoveValidator(std::move(std::make_unique<DiagonalMoveValidator>()));
 };
 
 Queen::Queen(Color color) : Piece(color)
 {
-    _symbol = "Queen";
-    addMoveValidator(std::move(std::make_unique<HorizonalMoveValidator>()));
-    addMoveValidator(std::move(std::make_unique<DiagonalMoveValidator>()));
-    addMoveValidator(std::move(std::make_unique<VerticalMoveValidator>()));
+    symbol_ = "Queen";
+    AddMoveValidator(std::move(std::make_unique<HorizonalMoveValidator>()));
+    AddMoveValidator(std::move(std::make_unique<DiagonalMoveValidator>()));
+    AddMoveValidator(std::move(std::make_unique<VerticalMoveValidator>()));
 };
 
 King::King(Color color) : Piece(color)
 {
-    _symbol = "King";
-    addMoveValidator(std::move(std::make_unique<SingleMoveValidator>()));
+    symbol_ = "King";
+    AddMoveValidator(std::move(std::make_unique<SingleMoveValidator>()));
 };

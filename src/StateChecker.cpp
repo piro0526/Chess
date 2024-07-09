@@ -1,24 +1,24 @@
 #include "StateChecker.hpp"
 #include "GameStateCheck.hpp"
 
-int StateInfo::getStateCode()
+int StateInfo::get_state_code()
 {
-    return _stateCode;
+    return state_code_;
 };
 
-std::string StateInfo::getStateDescription()
+std::string StateInfo::get_state_description()
 {
-    return _stateDescription;
+    return state_description_;
 };
 
-void StateInfo::setStateCode(int stateCode)
+void StateInfo::set_state_code(int state_code)
 {
-    _stateCode = stateCode;
+    state_code_ = state_code;
 };
 
-void StateInfo::setStateDescription(std::string stateDescription)
+void StateInfo::set_state_description(std::string state_description)
 {
-    _stateDescription = stateDescription;
+    state_description_ = state_description;
 };
 
 GameStateChecker::GameStateChecker(std::vector<std::unique_ptr<GameStateCheck>> checks)
@@ -26,13 +26,13 @@ GameStateChecker::GameStateChecker(std::vector<std::unique_ptr<GameStateCheck>> 
     _checks = std::move(checks);
 };
 
-StateInfo GameStateChecker::checkState(Board& board, PieceMetadata& metadata, Color color) const
+StateInfo GameStateChecker::CheckState(Board& board, PieceMetadata& metadata, Color color) const
 {
     StateInfo highestPriorityState(-1, "");
     for(auto& gs: _checks)
     {
-        StateInfo currentState = gs->getState(board, metadata, color);
-        if(currentState.getStateCode() > highestPriorityState.getStateCode())
+        StateInfo currentState = gs->get_state(board, metadata, color);
+        if(currentState.get_state_code() > highestPriorityState.get_state_code())
         {
             highestPriorityState = currentState;
         }
@@ -42,15 +42,15 @@ StateInfo GameStateChecker::checkState(Board& board, PieceMetadata& metadata, Co
 };
 
 
-StateInfo GameStateChecker::checkIllegalStates(Board& board, PieceMetadata& metadata, Color color) const
+StateInfo GameStateChecker::CheckIllegalStates(Board& board, PieceMetadata& metadata, Color color) const
 {
     StateInfo highestPriorityState(-1, "");
     for(auto& gs: _checks)
     {
-        if(gs->isIllegalForCurrentPlayer())
+        if(gs->IsIllegalForCurrentPlayer())
         {
-            StateInfo currentState = gs->getState(board, metadata, color);
-            if(currentState.getStateCode() > highestPriorityState.getStateCode())
+            StateInfo currentState = gs->get_state(board, metadata, color);
+            if(currentState.get_state_code() > highestPriorityState.get_state_code())
             {
                 highestPriorityState = currentState;
             }

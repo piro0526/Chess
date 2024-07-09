@@ -1,21 +1,21 @@
 #include "Move.hpp"
 
-void Move::setStart(Spot startSpot)
+void Move::set_start(Spot start_spot)
 {
-    _startSpot = startSpot;
+    start_spot_ = start_spot;
 };
 
-void Move::setEnd(Spot endSpot)
+void Move::set_end(Spot end_spot)
 {
-    _endSpot = endSpot; 
+    end_spot_ = end_spot;
 };
 
-Spot Move::getStart()
+Spot Move::get_start()
 {
-    return _startSpot;
+    return start_spot_;
 };
 
-Spot Move::getEnd()
+Spot Move::get_end()
 {
-    return _endSpot;
+    return end_spot_;
 };

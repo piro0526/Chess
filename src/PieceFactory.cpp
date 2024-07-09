@@ -1,28 +1,28 @@
 #include "PieceFactory.hpp"
 
-std::unique_ptr<Piece> PieceFactory::createPiece(std::string pieceType, Color color) const
+std::unique_ptr<Piece> PieceFactory::CreatePiece(std::string piece_type, Color color) const
 {
-    if(pieceType == "Pawn")
+    if(piece_type == "Pawn")
     {
         return std::make_unique<Pawn>(color);
     }
-    else if(pieceType == "Rook")
+    else if(piece_type == "Rook")
     {
         return std::make_unique<Rook>(color);
     }
-    else if(pieceType == "Knight")
+    else if(piece_type == "Knight")
     {
         return std::make_unique<Knight>(color);
     }
-    else if(pieceType == "Bishop")
+    else if(piece_type == "Bishop")
     {
         return std::make_unique<Bishop>(color);
     }
-    else if(pieceType == "Queen")
+    else if(piece_type == "Queen")
     {
         return std::make_unique<Queen>(color);
     }
-    else if(pieceType == "King")
+    else if(piece_type == "King")
     {
         return std::make_unique<King>(color);
     }

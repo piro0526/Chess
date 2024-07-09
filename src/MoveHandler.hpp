@@ -1,46 +1,49 @@
 #pragma once
 #include "Board.hpp"
+#include "Action.hpp"
 #include "PieceMetadata.hpp"
+#include <iostream>
 
 class IMoveHandler
 {
 public:
-    virtual void setNext(std::unique_ptr<IMoveHandler> nextMoveHandler)=0;
-    virtual bool handleMove(Board& board, PieceMetadata& metadata, Move move)=0;
+    virtual ~IMoveHandler(){};
+    virtual void SetNext(const std::shared_ptr<IMoveHandler>& next_move_handler)=0;
+    virtual int HandleMove(Board& board, PieceMetadata& metadata, Action action)=0;
 };
 
 class MoveHandler : public IMoveHandler
 {
 protected:
-    std::unique_ptr<IMoveHandler> _nextMoveHandler;
+    std::shared_ptr<IMoveHandler> next_move_handler_;
 public:
-    void setNext(std::unique_ptr<IMoveHandler> nextMoveHandler);
+    void SetNext(const std::shared_ptr<IMoveHandler>& next_move_handler);
 };
 
 class CastlingMoveHandler : public MoveHandler
 {
 public:
-    bool handleMove(Board& board, PieceMetadata& metadata, Move move);
-    bool isCastlingMove(Board& board, PieceMetadata& metadata, Move move);
+    int HandleMove(Board& board, PieceMetadata& metadata, Action action);
+    bool IsCastlingMove(Board& board, PieceMetadata& metadata, Move move);
 
 };
 
 class EnPassantMoveHandler : public MoveHandler
 {
 public:
-    bool handleMove(Board& board, PieceMetadata& metadata, Move move);
-    bool isEnPassantMove(Board& board, Move move);
+    int HandleMove(Board& board, PieceMetadata& metadata, Action action);
+    bool IsEnPassantMove(Board& board, Move move);
 };
 
 class PromotionMoveHandler : public MoveHandler
 {
 public:
-    bool handleMove(Board& board, PieceMetadata& metadata, Move move);
-    bool isPromotionMove(Board& board, PieceMetadata& metadata, Move move);
+    int HandleMove(Board& board, PieceMetadata& metadata, Action action);
+    bool IsPromotionMove(Board& board, PieceMetadata& metadata, Move move);
 };
 
 class RegularMoveHandler : public MoveHandler
 {
 public:
-    bool handleMove(Board& board, PieceMetadata& metadata, Move move);
+    int HandleMove(Board& board, PieceMetadata& metadata, Action action);
 };

@@ -3,144 +3,125 @@
 
 ChessGame::ChessGame()
 {
-    _board = Board();
-    _metadata = PieceMetadata(&_board);
-    _whitePlayer = std::make_shared<stdinPlayer>(WHITE);
-    _blackPlayer = std::make_shared<stdinPlayer>(BLACK);
-    init();
+    board_ = Board();
+    std::cout << "Board created" << std::endl;
+    white_interface_ = std::make_shared<CUI>(WHITE);
+    black_interface_ = std::make_shared<CUI>(BLACK);
+    Init();
 };
 
-ChessGame::ChessGame(std::unique_ptr<Player> whitePlayer, std::unique_ptr<Player> blackPlayer)
+ChessGame::ChessGame(const std::shared_ptr<Interface>& white_interface, const std::shared_ptr<Interface>& black_interface)
 {
-    _board = Board();
-    _metadata = PieceMetadata(&_board);
-    _whitePlayer = std::move(whitePlayer);
-    _blackPlayer = std::move(blackPlayer);
-    init();
+    board_ = Board();
+    std::cout << "Board created" << std::endl;
+    white_interface_ = std::move(white_interface);
+    black_interface_ = std::move(black_interface);
+    Init();
+    std::cout << "Initialized" << std::endl;
+    //board_.MovePiece(Move(Spot(int('7'-'1'),int('e'-'a')), Spot(int('5'-'1'),int('e'-'a'))));
 };
 
-void ChessGame::init()
+void ChessGame::Init()
 {
-    std::vector<std::unique_ptr<GameStateCheck>> checks;
+    metadata_ = PieceMetadata(&board_);
+
+    std::vector<std::unique_ptr<GameStateCheck> > checks;
     checks.emplace_back(std::move(std::make_unique<CheckState>()));
     checks.emplace_back(std::move(std::make_unique<CheckMateState>()));
     checks.emplace_back(std::move(std::make_unique<StaleMateState>()));
-    _stateChecker = std::move(std::make_unique<GameStateChecker>(std::move(checks)));
+    state_checker_ = std::move(std::make_unique<GameStateChecker>(std::move(checks)));
 
-    
-    std::unique_ptr<MoveHandler> reg = std::make_unique<RegularMoveHandler>();
-    std::unique_ptr<MoveHandler> enPassant = std::make_unique<EnPassantMoveHandler>();
-    std::unique_ptr<MoveHandler> promotion = std::make_unique<PromotionMoveHandler>();
-    std::unique_ptr<MoveHandler> castling = std::make_unique<CastlingMoveHandler>();
-    enPassant->setNext(std::move(reg));
-    promotion->setNext(std::move(enPassant));
-    castling->setNext(std::move(promotion));
-    _moveHandler = std::move(castling);
-    
+    auto reg = std::make_unique<RegularMoveHandler>();
+    auto enPassant = std::make_unique<EnPassantMoveHandler>();
+    auto promotion = std::make_unique<PromotionMoveHandler>();
+    auto castling = std::make_unique<CastlingMoveHandler>();
+    enPassant->SetNext(std::move(reg));
+    promotion->SetNext(std::move(enPassant));
+    castling->SetNext(std::move(promotion));
+    move_handler_ = std::move(castling);
 };
 
-void ChessGame::start()
+void ChessGame::Start()
 {
-    std::shared_ptr<Player> _currentPlayer = _whitePlayer;
-    StateInfo gameState(0, "");
+    std::shared_ptr<Interface> current_interface = white_interface_;
+    StateInfo game_state(0, "");
 
-    while(gameState.getStateCode() <= 1)
+    std::cout << "Game begin" << std::endl;
+
+    while(game_state.get_state_code() <= 1)
     {
-        std::string message = "";
         while(1)
         {
-            message = playTurn(_currentPlayer, message);
-            if(message == "success")
-            {
-                break;
-            }
-            else if(message == "promotion")
-            {
-                promotion();
-            }
+            if(PlayTurn(current_interface, game_state)) break;
         }
-        gameState = _stateChecker->checkState(_board, _metadata, swapPlayer(_currentPlayer)->getColor());
-        if(gameState.getStateCode() != 0)
+        game_state = state_checker_->CheckState(board_, metadata_, SwapInterface(current_interface)->get_color());
+        if(game_state.get_state_code() != 0)
         {
-            std::cout << gameState.getStateDescription() << std::endl;
+            std::cout << game_state.get_state_description() << std::endl;
         }
-        _currentPlayer = swapPlayer(_currentPlayer);
-        if(gameState.getStateCode() == 2)
+        current_interface = SwapInterface(current_interface);
+        if(game_state.get_state_code() == 2)
         {
             std::cout << "GG" << std::endl;
         }
     }
 };
 
-std::string ChessGame::playTurn(std::shared_ptr<Player> player, std::string error)
+bool ChessGame::PlayTurn(const std::shared_ptr<Interface>& current_interface, StateInfo current_state)
 {
-    std::string input = getPlayerInput(player, "getnextmove", error);
-    Move move = Move(parseCoordinates(input.substr(0,2)), parseCoordinates(input.substr(3,2)));
-    Spot startSpot = move.getStart();
-    std::shared_ptr<Piece> startPiece = _board.getPiece(move.getStart());
-    std::shared_ptr<Piece> endPiece = _board.getPiece(move.getEnd());
-    
-    if(_board.isSpotEmpty(startSpot) || !_board.getPiece(startSpot)->getColor() == player->getColor() || !_moveHandler->handleMove(_board, _metadata, move))
+    std::cout << ((current_interface->get_color() == 1) ? "w" : "b")  << " turn" << std::endl;
+    Action player_action = interpreter_.ToGame(current_interface->Input(interpreter_.ToInterface(board_, current_state)));
+    Move move = player_action.get_move();
+    Spot startSpot = move.get_start();
+    Spot endspot = move.get_end();
+    std::shared_ptr<Piece> start_piece = board_.GetPiece(move.get_start());
+    std::shared_ptr<Piece> end_piece = board_.GetPiece(move.get_end());
+
+    if(board_.IsSpotEmpty(startSpot) || board_.GetPiece(startSpot)->get_color() != current_interface->get_color())
     {
-        return "invalid input";
+        current_interface->Input("invalid move1");
+        return false;
+    }
+    int action_type = move_handler_->HandleMove(board_, metadata_, player_action);
+
+    if(action_type<0)
+    {
+        current_interface->Input("invalid move2");
+        return false;
+    }
+
+    //invalid state
+    StateInfo game_state = state_checker_-> CheckIllegalStates(board_, metadata_, current_interface->get_color());
+    if(game_state.get_state_code() != 0)
+    {
+        Undo(move, start_piece, end_piece);
+        current_interface->Input(game_state.get_state_description());
+        return false;
+    }
+
+
+    hist_.push_back({std::to_string(action_type), player_action.get_saction(), interpreter_.FEN(board_)});
+
+    return true;
+};
+
+
+void ChessGame::Undo(Move move, const std::shared_ptr<Piece>& start_piece, const std::shared_ptr<Piece>& end_piece)
+{
+    if (end_piece != nullptr)
+        board_.UnCapturePiece(end_piece);
+    board_.SetPiece(start_piece, move.get_start());
+    board_.SetPiece(end_piece, move.get_end());
+};
+
+std::shared_ptr<Interface> ChessGame::SwapInterface(const std::shared_ptr<Interface>& interface)
+{
+    if(interface->get_color() == WHITE)
+    {
+        return black_interface_;
     }
     else
     {
-        StateInfo gameState = _stateChecker->checkIllegalStates(_board, _metadata, player->getColor());
-        if(gameState.getStateCode() != 0)
-        {
-            undo(move, startPiece, endPiece);
-            return gameState.getStateDescription();
-        }
-    }
-
-    if(move.getEnd().getFile() == (startPiece->getColor() == WHITE ? 0 : BOARD_SIZE - 1) && startPiece->getSymbol() == "Pawn")
-    {
-        return "promotion";
-    }
-
-    return "success";
-};
-
-std::string ChessGame::getPlayerInput(std::shared_ptr<Player> player, std::string command, std::string error)
-{
-    std::map<std::string, std::string> message;
-    std::string fen = _board.getFEN();
-    message["FEN"] = fen;
-    message["command"] = command;
-    message["errorMessage"] = error;
-    return player->getPlayerInput(message);
-};
-
-std::string ChessGame::promotion(std::shared_ptr<Player> player, std::string error)
-{
-    std::string input = getPlayerInput(player, "promotion", error);
-    
-}
-
-Spot ChessGame::parseCoordinates(std::string strCoodinates)
-{
-    int x = strCoodinates[0] - 'a';
-    int y = strCoodinates[1] - '1';
-    return Spot(x, y);
-};
-
-void ChessGame::undo(Move move, std::shared_ptr<Piece> startPiece, std::shared_ptr<Piece> endPiece)
-{
-    if (endPiece != nullptr)
-            _board.unCapturePiece(endPiece);
-        _board.setPiece(startPiece, move.getStart());
-        _board.setPiece(endPiece, move.getEnd());
-};
-
-std::shared_ptr<Player> ChessGame::swapPlayer(std::shared_ptr<Player> player)
-{
-    if(player->getColor() == WHITE)
-    {
-        return _blackPlayer;
-    }
-    else
-    {
-        return _whitePlayer;
+        return white_interface_;
     }
 };

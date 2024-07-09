@@ -1,59 +1,60 @@
 #include "MoveHandler.hpp"
 
-void MoveHandler::setNext(std::unique_ptr<IMoveHandler> nextMoveHandler)
+void MoveHandler::SetNext(const std::shared_ptr<IMoveHandler>& next_move_handler)
 {
-    _nextMoveHandler = std::move(nextMoveHandler);
+    next_move_handler_ = std::move(next_move_handler);
 };
 
-bool CastlingMoveHandler::handleMove(Board& board, PieceMetadata& metadata, Move move)
+int  CastlingMoveHandler::HandleMove(Board& board, PieceMetadata& metadata, Action action)
 {
-    if(isCastlingMove(board, metadata, move))
+
+    Move move = action.get_move();
+    if(IsCastlingMove(board, metadata, move))
     {
-        Rank rank = move.getStart().getRank();
-        File file = move.getStart().getFile();
-        int yDistance = move.getStart().getFile() - move.getEnd().getFile();
+        Rank rank = move.get_start().get_rank();
+        File file = move.get_start().get_file();
+        int yDistance = move.get_start().get_file() - move.get_end().get_file();
         int direction = yDistance < 0 ? 1 : -1;
-        Move rookMove(move.getEnd(), Spot(rank, file + direction));
-        Move kingMove(move.getEnd(), Spot(rank, file + 3 * direction));
-        board.movePiece(rookMove);
-        board.movePiece(kingMove);
-
-
-        return true;
+        Move rookMove(move.get_end(), Spot(rank, file + direction));
+        Move kingMove(move.get_end(), Spot(rank, file + 3 * direction));
+        board.MovePiece(rookMove);
+        board.MovePiece(kingMove);
+        board.CapturePiece(nullptr);
+        return 1;
     }
-    if(_nextMoveHandler != nullptr)
+    if(next_move_handler_ != nullptr)
     {
-        return _nextMoveHandler->handleMove(board, metadata, move);
+        return next_move_handler_->HandleMove(board, metadata, action);
     }
 
-    
-    return false;
+
+    return -1;
 };
 
-bool CastlingMoveHandler::isCastlingMove(Board& board, PieceMetadata& metadata, Move move)
+bool CastlingMoveHandler::IsCastlingMove(Board& board, PieceMetadata& metadata, Move move)
 {
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    if(board.isSpotEmpty(endSpot))
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+    if(board.IsSpotEmpty(end_spot))
     {
         return false;
     }
-    std::shared_ptr<Piece> piece1 = board.getPiece(startSpot);
-    std::shared_ptr<Piece> piece2 = board.getPiece(endSpot);
+    std::shared_ptr<Piece> piece1 = board.GetPiece(start_spot);
+    std::shared_ptr<Piece> piece2 = board.GetPiece(end_spot);
 
-    if(piece1->getSymbol() != "King" || piece2->getSymbol() != "Rook" || piece1->getMovedAmount() > 0 || piece2->getMovedAmount() > 0 || piece1->getColor() == piece2->getColor())
+    if(piece1->get_symbol() != "King" || piece2->get_symbol() != "Rook" || piece1->get_moved_amount() > 0 || piece2->get_moved_amount() > 0 || piece1->get_color() == piece2->get_color())
     {
         return false;
     }
 
-    int yDistance = endSpot.getFile() - startSpot.getFile();
+    int yDistance = end_spot.get_file() - start_spot.get_file();
     int direction = yDistance > 0 ? 1 : -1;
 
     for(int i=0; i<4; i++)
     {
-        Rank rank = startSpot.getRank();
-        File file = startSpot.getFile() + 1 * direction;
-        if(metadata.isSpotThreatened(piece1->getColor(), Spot(rank, file)) || (!board.isSpotEmpty(Spot(rank, file)) && file != startSpot.getFile() && file != endSpot.getFile()))
+        Rank rank = start_spot.get_rank();
+        File file = start_spot.get_file() + 1 * direction;
+        if(metadata.IsSpotThreatened(piece1->get_color(), Spot(rank, file)).size() > 0 || (!board.IsSpotEmpty(Spot(rank, file)) && file != start_spot.get_file() && file != end_spot.get_file()))
         {
             return false;
         }
@@ -62,55 +63,52 @@ bool CastlingMoveHandler::isCastlingMove(Board& board, PieceMetadata& metadata, 
     return true;
 };
 
-bool EnPassantMoveHandler::handleMove(Board& board, PieceMetadata& metadata, Move move)
+int EnPassantMoveHandler::HandleMove(Board& board, PieceMetadata& metadata, Action action)
 {
-    if(isEnPassantMove(board, move))
+
+    Move move = action.get_move();
+    if(IsEnPassantMove(board, move))
     {
-        board.movePiece(move);
-        Rank rank = move.getStart().getRank();
-        File file = move.getEnd().getFile();
-        board.resetTile(Spot(rank, file));
+        board.MovePiece(move);
+        Rank rank = move.get_start().get_rank();
+        File file = move.get_end().get_file();
+        board.CapturePiece(board.GetPiece(Spot(rank, file)));
+        board.ResetTile(Spot(rank, file));
 
-        return true;
+        return 2;
     }
-    if(_nextMoveHandler != nullptr)
+    if(next_move_handler_ != nullptr)
     {
-        return _nextMoveHandler->handleMove(board, metadata, move);
+        return next_move_handler_->HandleMove(board, metadata, action);
     }
 
-
-    
-    return false;
+    return -1;
 };
 
-bool EnPassantMoveHandler::isEnPassantMove(Board& board, Move move)
-{    
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    if (board.isOutofRange(move) || !(board.getPiece(startSpot)->getSymbol() == "Pawn"))
+bool EnPassantMoveHandler::IsEnPassantMove(Board& board, Move move)
+{
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+
+    if (board.IsOutofRange(move) || !(board.GetPiece(start_spot)->get_symbol() == "Pawn"))
     {
         return false;
     }
-    std::shared_ptr<Piece> pawn = board.getPiece(startSpot);
+    std::shared_ptr<Piece> pawn = board.GetPiece(start_spot);
 
-    int xDistance = endSpot.getRank() - startSpot.getRank();
-    int yDistance = endSpot.getFile() - startSpot.getFile();
+    int xDistance = end_spot.get_rank() - start_spot.get_rank();
+    int yDistance = end_spot.get_file() - start_spot.get_file();
 
-    int side = pawn->getColor() == WHITE ? -1 : 1;
-    
-    if(xDistance != side || abs(yDistance) != 1 || !board.isSpotEmpty(endSpot))
-    {
-        return false;
-    }
+    int side = pawn->get_color() == WHITE ? -1 : 1;
 
-    if(board.isOutofRange(move))
+    if(xDistance != side || abs(yDistance) != 1 || !board.IsSpotEmpty(end_spot))
     {
         return false;
     }
 
-    std::shared_ptr<Piece> enemyPawn = board.getPiece(Spot(startSpot.getRank(), endSpot.getFile()));
+    std::shared_ptr<Piece> enemyPawn = board.GetPiece(Spot(start_spot.get_rank(), end_spot.get_file()));
 
-    if(!(enemyPawn->getSymbol() == "Pawn") || pawn->isAllyPiece(enemyPawn) || enemyPawn->getMovedAmount() != 1)
+    if(!(enemyPawn->get_symbol() == "Pawn") || pawn->IsAllyPiece(enemyPawn) || enemyPawn->get_moved_amount() != 1)
     {
         return false;
     }
@@ -118,53 +116,67 @@ bool EnPassantMoveHandler::isEnPassantMove(Board& board, Move move)
     return true;
 }
 
-bool PromotionMoveHandler::handleMove(Board& board, PieceMetadata& metadata, Move move)
+int PromotionMoveHandler::HandleMove(Board& board, PieceMetadata& metadata, Action action)
 {
-    if(isPromotionMove(board, metadata, move))
+    Move move = action.get_move();
+    std::string piece_type = action.get_piece_type();
+    if(IsPromotionMove(board, metadata, move))
     {
-        return true;
+        int file = move.get_end().get_file();
+        int rank = move.get_end().get_rank();
+        board.MovePiece(move);
+        board.CapturePiece(board.GetPiece(move.get_end()));
+        Color color = board.GetPiece(move.get_end())->get_color();
+        PieceFactory factory;
+        std::unique_ptr<Piece> tmp_piece = factory.CreatePiece(piece_type, color);
+        board.SetPiece(std::move(tmp_piece), Spot(rank, file));
+        return 3;
     }
-    if(_nextMoveHandler != nullptr)
+    if(next_move_handler_ != nullptr)
     {
-        return _nextMoveHandler->handleMove(board, metadata, move);
+        return next_move_handler_->HandleMove(board, metadata, action);
     }
-    
-    return false;
+
+    return -1;
 };
 
-bool PromotionMoveHandler::isPromotionMove(Board& board, PieceMetadata& metadata, Move move)
+bool PromotionMoveHandler::IsPromotionMove(Board& board, PieceMetadata& metadata, Move move)
 {
-    if(!metadata.isMoveValid(move))
+    if(!metadata.IsMoveValid(move))
     {
         return false;
     }
 
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    std::shared_ptr<Piece> piece = board.getPiece(startSpot);
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+    std::shared_ptr<Piece> piece = board.GetPiece(start_spot);
 
-    if(!(piece->getSymbol() == "Pawn"))
+    if(!(piece->get_symbol() == "Pawn"))
     {
         return false;
     }
 
-    int edge = piece->getColor() == WHITE ? 0 : BOARD_SIZE - 1;
+    int edge = piece->get_color() == WHITE ? 0 : BOARD_SIZE - 1;
 
-    return endSpot.getFile() == edge;
+    return end_spot.get_file() == edge;
 };
 
-bool RegularMoveHandler::handleMove(Board& board, PieceMetadata& metadata, Move move)
+int RegularMoveHandler::HandleMove(Board& board, PieceMetadata& metadata, Action action)
 {
-    
-    if (metadata.isMoveValid(move) && !board.getPiece(move.getStart())->isAllyPiece(board.getPiece(move.getEnd())))
+    Move move = action.get_move();
+    if (metadata.IsMoveValid(move) && !board.GetPiece(move.get_start())->IsAllyPiece(board.GetPiece(move.get_end())))
     {
-        board.movePiece(move);
-        return true;
+        bool is_take_piece = (board.GetPiece(move.get_end())!=nullptr);
+        board.MovePiece(move);
+        if(!is_take_piece){
+            board.CapturePiece(nullptr);
+        }
+        return 0;
     }
-    if (_nextMoveHandler != nullptr)
+    if (next_move_handler_ != nullptr)
     {
-        return _nextMoveHandler->handleMove(board, metadata, move);
+        return next_move_handler_->HandleMove(board, metadata, action);
     }
 
-    return false;
+    return -1;
 };

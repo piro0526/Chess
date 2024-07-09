@@ -14,28 +14,21 @@ class MoveValidator;
 
 class Board
 {
-private:
-    std::array<std::array<std::shared_ptr<Piece>, BOARD_SIZE>, BOARD_SIZE> _rawBoard;
-    std::array<std::array<std::string, BOARD_SIZE>, 2> _configuretion = {{
-        {"Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn", "Pawn"},
-        {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"}
-        }};
-    std::vector<std::shared_ptr<Piece>>  _capturedPieces;
-    std::vector<std::tuple<Move, std::shared_ptr<Piece>, std::shared_ptr<Piece>>> _history;
-    int _turns;
+protected:
+    std::array<std::array<std::shared_ptr<Piece>, BOARD_SIZE>, BOARD_SIZE> raw_board_;
+    std::string configuretion_ = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+    std::vector<std::shared_ptr<Piece> >  captured_pieces_;
 public:
     Board();
-    void initBoard();
-    bool isOutofRange(Move move) const;
-    bool isOutofRange(Spot spot) const;
-    bool isSpotEmpty(Spot spot) const;
-    void setPiece(std::shared_ptr<Piece> piece, Spot spot);
-    bool movePiece(Move move);
-    void capturePiece(std::shared_ptr<Piece> piece);
-    void unCapturePiece(std::shared_ptr<Piece> piece);
-    void resetTile(Spot spot);
-    void viewBoard();
-    std::shared_ptr<Piece> getPiece(Spot spot) const;
-    int getTurn() const;
-    std::string getFEN();
+    void InitBoard();
+    bool IsOutofRange(Move move) const;
+    bool IsOutofRange(Spot spot) const;
+    bool IsSpotEmpty(Spot spot) const;
+    void SetPiece(const std::shared_ptr<Piece>& piece, Spot spot);
+    bool MovePiece(Move move);
+    void CapturePiece(std::shared_ptr<Piece> piece);
+    void UnCapturePiece(std::shared_ptr<Piece> piece);
+    std::shared_ptr<Piece> PopPiece();
+    void ResetTile(Spot spot);
+    std::shared_ptr<Piece> GetPiece(Spot spot) const;
 };

@@ -10,33 +10,32 @@ typedef int Color;
 
 class StateInfo
 {
-private:
-    int _stateCode;
-    std::string _stateDescription;
+protected:
+    int state_code_;
+    std::string state_description_;
 public:
-    StateInfo(int stateCode, std::string stateDescription) : _stateCode(stateCode), _stateDescription(stateDescription){};
-    int getStateCode();
-    std::string getStateDescription();
-    void setStateCode(int stateCode);
-    void setStateDescription(std::string stateDescription);
+    StateInfo(int state_code, std::string state_description) : state_code_(state_code), state_description_(state_description){};
+    int get_state_code();
+    std::string get_state_description();
+    void set_state_code(int state_code);
+    void set_state_description(std::string state_description);
 };
 
 
 
 class StateChecker
 {
-private:
 public:
-    virtual StateInfo checkState(Board& board, PieceMetadata& metadata, Color color) const {return StateInfo(0, "");};
-    virtual StateInfo checkIllegalStates(Board& board, PieceMetadata& metadata, Color color) const {return StateInfo(0, "");};
+    virtual StateInfo CheckState(Board& board, PieceMetadata& metadata, Color color) const {return StateInfo(0, "");};
+    virtual StateInfo CheckIllegalStates(Board& board, PieceMetadata& metadata, Color color) const {return StateInfo(0, "");};
 };
 
 class GameStateChecker : public StateChecker
 {
-private:
-    std::vector<std::unique_ptr<GameStateCheck>> _checks;
+protected:
+    std::vector<std::unique_ptr<GameStateCheck> > _checks;
 public:
-    GameStateChecker(std::vector<std::unique_ptr<GameStateCheck>> checks);
-    StateInfo checkState(Board& board, PieceMetadata& metadata, Color color) const;
-    StateInfo checkIllegalStates(Board& board, PieceMetadata& metadata, Color color) const;
+    GameStateChecker(std::vector<std::unique_ptr<GameStateCheck> > checks);
+    StateInfo CheckState(Board& board, PieceMetadata& metadata, Color color) const;
+    StateInfo CheckIllegalStates(Board& board, PieceMetadata& metadata, Color color) const;
 };

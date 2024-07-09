@@ -1,5 +1,9 @@
 # CMakeのバージョンを設定
 cmake_minimum_required(VERSION 3.13)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_CXX_COMPILER "g++")
 # プロジェクト名と使用する言語を設定
 project(chess CXX)
 # a.outという実行ファイルをmain.cppとhello.cppから作成
@@ -15,6 +19,8 @@ add_executable(
     Piece.cpp
     PieceFactory.cpp
     PieceMetadata.cpp
-    Player.cpp
+    Interface.cpp
     StateChecker.cpp
+    Action.cpp
+    Interpreter.cpp
 )

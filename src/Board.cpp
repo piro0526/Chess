@@ -3,10 +3,10 @@
 
 Board::Board()
 {
-    initBoard();
+    InitBoard();
 };
 
-void Board::initBoard()
+void Board::InitBoard()
 {
     PieceFactory fac;
 
@@ -14,206 +14,122 @@ void Board::initBoard()
     {
         for(int j=0; j<BOARD_SIZE; j++)
         {
-            _rawBoard[i][j] = nullptr;
+            SetPiece(nullptr, Spot(i,j));
         }
     }
 
-    for(int i=0; i<2; i++)
+    int index = 0;
+    Rank r=BOARD_SIZE-1;
+    File f=0;
+    for(int i=0; i<configuretion_.length(); i++)
     {
-        for(int j=0; j<BOARD_SIZE; j++)
-        {
-            setPiece(fac.createPiece(_configuretion[i][j], WHITE), Spot(j, 1 - i));
+        std::shared_ptr<Piece> piece;
+        if(configuretion_[i] == 'p'){
+            piece = fac.CreatePiece("Pawn", BLACK);
+        }else if(configuretion_[i] == 'k'){
+            piece = fac.CreatePiece("King", BLACK);
+        }else if(configuretion_[i] == 'b'){
+            piece = fac.CreatePiece("Bishop", BLACK);
+        }else if(configuretion_[i] == 'n'){
+            piece = fac.CreatePiece("Knight", BLACK);
+        }else if(configuretion_[i] == 'r'){
+            piece = fac.CreatePiece("Rook", BLACK);
+        }else if(configuretion_[i] == 'q'){
+            piece = fac.CreatePiece("Queen", BLACK);
+        }else if(configuretion_[i] == 'P'){
+            piece = fac.CreatePiece("Pawn", WHITE);
+        }else if(configuretion_[i] == 'K'){
+            piece = fac.CreatePiece("King", WHITE);
+        }else if(configuretion_[i] == 'Q'){
+            piece = fac.CreatePiece("Queen", WHITE);
+        }else if(configuretion_[i] == 'B'){
+            piece = fac.CreatePiece("Bishop", WHITE);
+        }else if(configuretion_[i] == 'N'){
+            piece = fac.CreatePiece("Knight", WHITE);
+        }else if(configuretion_[i] == 'R'){
+            piece = fac.CreatePiece("Rook", WHITE);
+        }else if(configuretion_[i] == '/'){
+            f = 0;
+            r--;
+            continue;
+        }else if(std::isdigit(configuretion_[i])){
+            f += int(configuretion_[i]-'0');
+            continue;
         }
-    }
 
-    for(int i=0; i<2; i++)
-    {
-        for(int j=0; j<BOARD_SIZE; j++)
-        {
-            setPiece(fac.createPiece(_configuretion[i][j], BLACK), Spot(j ,BOARD_SIZE - 2 + i));
-        }
+        SetPiece(piece, Spot(r,f));
+        f++;
     }
 };
 
-bool Board::isOutofRange(Move move) const
+bool Board::IsOutofRange(Move move) const
 {
-    return isOutofRange(move.getStart()) || isOutofRange(move.getEnd());
+    return IsOutofRange(move.get_start()) || IsOutofRange(move.get_end());
 };
 
-bool Board::isOutofRange(Spot spot) const
+bool Board::IsOutofRange(Spot spot) const
 {
-    return spot.getFile() < 0 || spot.getFile() >= BOARD_SIZE || spot.getRank() < 0 || spot.getRank() >= BOARD_SIZE;
+    return spot.get_file() < 0 || spot.get_file() >= BOARD_SIZE || spot.get_rank() < 0 || spot.get_rank() >= BOARD_SIZE;
 };
 
-bool Board::isSpotEmpty(Spot spot) const
+bool Board::IsSpotEmpty(Spot spot) const
 {
-    return _rawBoard[spot.getRank()][spot.getFile()] == nullptr;
+    return raw_board_[spot.get_rank()][spot.get_file()] == nullptr;
 };
 
-void Board::setPiece(std::shared_ptr<Piece> piece, Spot spot)
+void Board::SetPiece(const std::shared_ptr<Piece>& piece, Spot spot)
 {
-    _rawBoard[spot.getRank()][spot.getFile()] = piece;
+    raw_board_[spot.get_rank()][spot.get_file()] = piece;
 };
 
-bool Board::movePiece(Move move)
+bool Board::MovePiece(Move move)
 {
-    if(isOutofRange(move))
+    if(IsOutofRange(move))
     {
         return false;
     };
 
-    std::shared_ptr<Piece> piece = getPiece(move.getStart());
+    std::shared_ptr<Piece> piece = GetPiece(move.get_start());
 
     if(piece == nullptr)
     {
         return false;
     }
 
-    if(!isSpotEmpty(move.getEnd()))
+    if(!IsSpotEmpty(move.get_end()))
     {
-        capturePiece(getPiece(move.getEnd()));
-        resetTile(move.getEnd());
+        CapturePiece(GetPiece(move.get_end()));
+        ResetTile(move.get_end());
     }
-    
-    setPiece(piece, move.getEnd());
-    setPiece(nullptr, move.getStart());
+    SetPiece(piece, move.get_end());
+    SetPiece(nullptr, move.get_start());
 
     return true;
 };
 
-void Board::capturePiece(std::shared_ptr<Piece> piece)
+void Board::CapturePiece(std::shared_ptr<Piece> piece)
 {
-    _capturedPieces.push_back(piece);
+    captured_pieces_.push_back(piece);
 };
 
-void Board::unCapturePiece(std::shared_ptr<Piece> piece)
+void Board::UnCapturePiece(std::shared_ptr<Piece> piece)
 {
-    std::remove(std::begin(_capturedPieces), std::end(_capturedPieces), piece);
+    std::remove(std::begin(captured_pieces_), std::end(captured_pieces_), piece);
 };
 
-void Board::resetTile(Spot spot)
+void Board::ResetTile(Spot spot)
 {
-    _rawBoard[spot.getRank()][spot.getFile()] = nullptr;
+    raw_board_[spot.get_rank()][spot.get_file()] = nullptr;
 };
 
-void Board::viewBoard()
+std::shared_ptr<Piece> Board::GetPiece(Spot spot) const
 {
-    return;
+    return raw_board_[spot.get_rank()][spot.get_file()];
 };
 
-std::shared_ptr<Piece> Board::getPiece(Spot spot) const
+std::shared_ptr<Piece> Board::PopPiece()
 {
-    return _rawBoard[spot.getRank()][spot.getFile()];
-};
-
-int Board::getTurn() const
-{
-    return _turns;
-};
-
-std::string Board::getFEN()
-{
-    std::string fen = "";
-    int empty_cnt = 0;
-    for(int f=BOARD_SIZE-1; f>=0; f--)
-    {
-        empty_cnt = 0;
-        for(int r=0; r<BOARD_SIZE; r++)
-        {
-            if(getPiece(Spot(r, f)) == nullptr)
-            {
-                empty_cnt++;
-                continue;
-            }
-
-            if(empty_cnt>0)
-            {
-                fen.push_back(empty_cnt+'0');
-                empty_cnt = 0;
-            }
-
-            std::string s = getPiece(Spot(r, f))->getSymbol();
-            Color b = getPiece(Spot(r, f))->getColor();
-
-
-            if(s=="Pawn")
-            {
-                if(b==WHITE)
-                {
-                    fen.push_back('P');
-                }
-                else if(b==BLACK)
-                {
-                    fen.push_back('p');
-                }
-            }
-            else if(s=="Rook")
-            {
-                if(b==WHITE)
-                {
-                    fen.push_back('R');
-                }
-                else if(b==BLACK)
-                {
-                    fen.push_back('r');
-                }
-            }
-            else if(s=="Knight")
-            {
-                if(b==WHITE)
-                {
-                    fen.push_back('N');
-                }
-                else if(b==BLACK)
-                {
-                    fen.push_back('n');
-                }
-            }
-            else if(s=="Bishop")
-            {
-                if(b==WHITE)
-                {
-                    fen.push_back('B');
-                }
-                else if(b==BLACK)
-                {
-                    fen.push_back('b');
-                }
-            }
-            else if(s=="Queen")
-            {
-                if(b==WHITE)
-                {
-                    fen.push_back('Q');
-                }
-                else if(b==BLACK)
-                {
-                    fen.push_back('q');
-                }
-            }
-            else if(s=="King")
-            {
-                if(b==WHITE)
-                {
-                    fen.push_back('K');
-                }
-                else if(b==BLACK)
-                {
-                    fen.push_back('k');
-                }
-            }
-        }
-
-        if(empty_cnt > 0)
-        {
-            fen.push_back(empty_cnt+'0');
-            empty_cnt = 0;
-        }
-
-        if(f != 0)
-        {
-            fen.push_back('/');
-        }
-    }
-    return fen;
-};
+    std::shared_ptr<Piece> p = captured_pieces_.back();
+    captured_pieces_.pop_back();
+    return p;
+}

@@ -2,9 +2,9 @@
 #include <iostream>
 
 
-bool PieceMetadata::canPieceMove(Spot pieceSpot, Color color)
+bool PieceMetadata::CanPieceMove(Spot piece_spot, Color color)
 {
-    if(_board->isSpotEmpty(pieceSpot))
+    if(board_->IsSpotEmpty(piece_spot))
     {
         return false;
     }
@@ -13,70 +13,71 @@ bool PieceMetadata::canPieceMove(Spot pieceSpot, Color color)
     {
         for(int r=0; r<BOARD_SIZE; r++)
         {
-            Spot endSpot(r, f);
-            if(_board->getPiece(pieceSpot)->getSymbol()=="King")
+            Spot end_spot(r, f);
+            if(board_->GetPiece(piece_spot)->get_symbol()=="King")
             {
-                if(isMoveValid(Move(pieceSpot, endSpot)) && !isSpotThreatened(color, endSpot))
+                if(IsMoveValid(Move(piece_spot, end_spot)) && IsSpotThreatened(color, end_spot).size()>0)
                 {
                     return true;
                 }
             }
-            else if(isMoveValid(Move(pieceSpot, endSpot)))
+            else if(IsMoveValid(Move(piece_spot, end_spot)))
             {
                 return true;
             }
         }
     }
-    
+
     return false;
 };
 
-bool PieceMetadata::isSpotThreatened(Color defendingcolor, Spot defendingSpot)
+std::vector<Spot> PieceMetadata::IsSpotThreatened(Color defendingcolor, Spot defending_spot)
 {
+    std::vector<Spot> ememy_spots;
     for(int f=0; f<BOARD_SIZE; f++)
     {
         for(int r=0; r<BOARD_SIZE; r++)
         {
-            Spot enemySpot(r, f);
-            std::shared_ptr<Piece> enemyPiece = _board->getPiece(enemySpot);
+            Spot enemy_spot(r, f);
+            std::shared_ptr<Piece> enemyPiece = board_->GetPiece(enemy_spot);
 
-            if(!_board->isSpotEmpty(enemySpot))
+            if(!board_->IsSpotEmpty(enemy_spot))
             {
-                if(enemyPiece->getColor() == -defendingcolor && isMoveValid(Move(enemySpot, defendingSpot))){
-                    return true;
+                if(enemyPiece->get_color() == -defendingcolor && IsMoveValid(Move(enemy_spot, defending_spot))){
+                    ememy_spots.push_back(enemy_spot);
                 }
             }
         }
     }
 
-    return false;
+    return ememy_spots;
 };
 
-bool PieceMetadata::isMoveValid(Move move)
+bool PieceMetadata::IsMoveValid(Move move)
 {
-    std::shared_ptr<Piece> piece = _board->getPiece(move.getStart());
+    std::shared_ptr<Piece> piece = board_->GetPiece(move.get_start());
 
-    if(_board->isSpotEmpty(move.getStart()))
+    if(board_->IsSpotEmpty(move.get_start()))
     {
         std::cout << "!empty!" << std::endl;
         std::cout << (piece == nullptr) << std::endl;
         return false;
     }
 
-    return piece->canMakeMove(*_board, move);
+    return piece->CanMakeMove(*board_, move);
 };
 
-Spot PieceMetadata::findKingLocation(Color color)
+Spot PieceMetadata::FindKingLocation(Color color)
 {
     for(int f=0; f<BOARD_SIZE; f++)
     {
         for(int r=0; r<BOARD_SIZE; r++)
         {
-            std::shared_ptr<Piece> temp = _board->getPiece(Spot(r, f));
+            std::shared_ptr<Piece> temp = board_->GetPiece(Spot(r, f));
 
             if(temp != nullptr)
             {
-                if(temp->getSymbol() == "King" && temp->getColor() == color)
+                if(temp->get_symbol() == "King" && temp->get_color() == color)
                 {
                     return Spot(r, f);
                 }

@@ -2,19 +2,19 @@
 #include "Board.hpp"
 
 
-bool MoveValidator::isMoveValid(Board& board, Move move) const
+bool MoveValidator::IsMoveValid(Board& board, Move move) const
 {
-    if(board.isOutofRange(move))
+    if(board.IsOutofRange(move))
     {
         return false;
     }
 
-    if(board.isSpotEmpty(move.getStart()))
+    if(board.IsSpotEmpty(move.get_start()))
     {
         return false;
     }
 
-    if(board.getPiece(move.getStart())->isAllyPiece(board.getPiece(move.getEnd())))
+    if(board.GetPiece(move.get_start())->IsAllyPiece(board.GetPiece(move.get_end())))
     {
         return false;
     }
@@ -23,17 +23,17 @@ bool MoveValidator::isMoveValid(Board& board, Move move) const
 }
 
 
-bool DiagonalMoveValidator::isMoveValid(Board& board, Move move) const
+bool DiagonalMoveValidator::IsMoveValid(Board& board, Move move) const
 {
-    if(!MoveValidator::isMoveValid(board, move))
+    if(!MoveValidator::IsMoveValid(board, move))
     {
         return false;
     }
-    
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    int rankDistance = move.getEnd().getRank()-move.getStart().getRank();
-    int fileDistance = move.getEnd().getFile()-move.getStart().getFile();
+
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+    int rankDistance = move.get_end().get_rank()-move.get_start().get_rank();
+    int fileDistance = move.get_end().get_file()-move.get_start().get_file();
 
     if(abs(rankDistance) != abs(fileDistance) || rankDistance == 0 || fileDistance == 0)
     {
@@ -45,7 +45,7 @@ bool DiagonalMoveValidator::isMoveValid(Board& board, Move move) const
 
     for(int i=1; i<abs(rankDistance); i++)
     {
-        if(!board.isSpotEmpty(Spot(startSpot.getRank() + rankDirection*i, startSpot.getFile() + fileDirection*i)))
+        if(!board.IsSpotEmpty(Spot(start_spot.get_rank() + rankDirection*i, start_spot.get_file() + fileDirection*i)))
         {
             return false;
         }
@@ -54,17 +54,17 @@ bool DiagonalMoveValidator::isMoveValid(Board& board, Move move) const
     return true;
 };
 
-bool HorizonalMoveValidator::isMoveValid(Board& board, Move move) const
+bool HorizonalMoveValidator::IsMoveValid(Board& board, Move move) const
 {
-    if(!MoveValidator::isMoveValid(board, move))
+    if(!MoveValidator::IsMoveValid(board, move))
     {
         return false;
     }
-    
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    int rankDistance = move.getEnd().getRank()-move.getStart().getRank();
-    int fileDistance = move.getEnd().getFile()-move.getStart().getFile();
+
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+    int rankDistance = move.get_end().get_rank()-move.get_start().get_rank();
+    int fileDistance = move.get_end().get_file()-move.get_start().get_file();
 
     if(rankDistance == 0 || fileDistance != 0)
     {
@@ -75,7 +75,7 @@ bool HorizonalMoveValidator::isMoveValid(Board& board, Move move) const
 
     for(int i=1; i<abs(rankDistance); i++)
     {
-        if(!board.isSpotEmpty(Spot(startSpot.getRank() + rankDirection*i, startSpot.getFile())))
+        if(!board.IsSpotEmpty(Spot(start_spot.get_rank() + rankDirection*i, start_spot.get_file())))
         {
             return false;
         }
@@ -84,17 +84,17 @@ bool HorizonalMoveValidator::isMoveValid(Board& board, Move move) const
     return true;
 };
 
-bool VerticalMoveValidator::isMoveValid(Board& board, Move move) const
+bool VerticalMoveValidator::IsMoveValid(Board& board, Move move) const
 {
-    if(!MoveValidator::isMoveValid(board, move))
+    if(!MoveValidator::IsMoveValid(board, move))
     {
         return false;
     }
-    
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    int rankDistance = move.getEnd().getRank()-move.getStart().getRank();
-    int fileDistance = move.getEnd().getFile()-move.getStart().getFile();
+
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+    int rankDistance = move.get_end().get_rank()-move.get_start().get_rank();
+    int fileDistance = move.get_end().get_file()-move.get_start().get_file();
 
     if(rankDistance != 0 || fileDistance == 0)
     {
@@ -105,7 +105,7 @@ bool VerticalMoveValidator::isMoveValid(Board& board, Move move) const
 
     for(int i=1; i<abs(fileDistance); i++)
     {
-        if(!board.isSpotEmpty(Spot(startSpot.getRank(), startSpot.getFile() + fileDirection*i)))
+        if(!board.IsSpotEmpty(Spot(start_spot.get_rank(), start_spot.get_file() + fileDirection*i)))
         {
             return false;
         }
@@ -114,47 +114,47 @@ bool VerticalMoveValidator::isMoveValid(Board& board, Move move) const
     return true;
 };
 
-bool PawnMoveValidator::isMoveValid(Board& board, Move move) const
+bool PawnMoveValidator::IsMoveValid(Board& board, Move move) const
 {
-    if(!MoveValidator::isMoveValid(board, move))
+    if(!MoveValidator::IsMoveValid(board, move))
     {
         return false;
     }
-    
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    int rankDistance = endSpot.getRank()-startSpot.getRank();
-    int fileDistance = endSpot.getFile()-startSpot.getFile();
 
-    int side = board.getPiece(startSpot)->getColor();
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+    int rankDistance = end_spot.get_rank()-start_spot.get_rank();
+    int fileDistance = end_spot.get_file()-start_spot.get_file();
 
-    if(fileDistance == side && std::abs(rankDistance) == 1 && !board.isSpotEmpty(endSpot))
+    int side = board.GetPiece(start_spot)->get_color();
+
+
+    if(rankDistance == side && std::abs(fileDistance) == 1 && !board.IsSpotEmpty(end_spot))
     {
         return true;
     }
-    if(fileDistance == side && rankDistance == 0 && board.isSpotEmpty(endSpot))
+    if(rankDistance == side && fileDistance == 0 && board.IsSpotEmpty(end_spot))
     {
         return true;
     }
-    if(fileDistance == side*2 && rankDistance == 0 && board.isSpotEmpty(Spot(startSpot.getRank(), startSpot.getFile() + side)) && board.getPiece(startSpot)->getMovedAmount()==0)
+    if(rankDistance == side*2 && fileDistance == 0 && board.IsSpotEmpty(Spot(start_spot.get_rank() + side, start_spot.get_file())) && board.GetPiece(start_spot)->get_moved_amount()==0)
     {
         return true;
     }
-
     return false;
 };
 
-bool KightMoveValidator::isMoveValid(Board& board, Move move) const
+bool KightMoveValidator::IsMoveValid(Board& board, Move move) const
 {
-    if(!MoveValidator::isMoveValid(board, move))
+    if(!MoveValidator::IsMoveValid(board, move))
     {
         return false;
     }
-    
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    int rankDistance = move.getEnd().getRank()-move.getStart().getRank();
-    int fileDistance = move.getEnd().getFile()-move.getStart().getFile();
+
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+    int rankDistance = move.get_end().get_rank()-move.get_start().get_rank();
+    int fileDistance = move.get_end().get_file()-move.get_start().get_file();
 
     if(abs(rankDistance) + abs(fileDistance) != 3 || rankDistance == 0 || fileDistance == 0)
     {
@@ -164,17 +164,17 @@ bool KightMoveValidator::isMoveValid(Board& board, Move move) const
     return true;
 };
 
-bool SingleMoveValidator::isMoveValid(Board& board, Move move) const
+bool SingleMoveValidator::IsMoveValid(Board& board, Move move) const
 {
-    if(!MoveValidator::isMoveValid(board, move))
+    if(!MoveValidator::IsMoveValid(board, move))
     {
         return false;
     }
-    
-    Spot startSpot = move.getStart();
-    Spot endSpot = move.getEnd();
-    int rankDistance = move.getEnd().getRank()-move.getStart().getRank();
-    int fileDistance = move.getEnd().getFile()-move.getStart().getFile();
+
+    Spot start_spot = move.get_start();
+    Spot end_spot = move.get_end();
+    int rankDistance = move.get_end().get_rank()-move.get_start().get_rank();
+    int fileDistance = move.get_end().get_file()-move.get_start().get_file();
 
     if(abs(rankDistance) > 1 || abs(fileDistance) > 1)
     {

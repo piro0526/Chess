@@ -1,0 +1,218 @@
+@startuml name
+
+abstract Piece{
+    #symbol_ : Symbol
+    #color_ : Color
+    #moved_amount : int
+    #move_varidators_ : vector<*MoveValidator>
+
+    +Piece(Color color)
+    +{static} get_color() : Color
+    +{static} getsymbol_() : Symbol
+    +AddMoveValidator(*MoveValdator) : void
+    +{static} CanMakeMove(Board&, Move) : bool
+    +{static} IsAllyPiece(Piece&) : bool
+    +get_moved_amount() : int
+    +Moved() : void
+}
+
+class Pawn{
+    +Pawn()
+}
+
+class King{
+    +King()
+}
+
+class Rook{
+    +Rook()
+}
+
+class Bishop{
+    +Bishop()
+}
+
+class Queen{
+    +Queen()
+}
+
+class Kight{
+    +Kight()
+}
+
+abstract MoveValidator{
+    +{abstract} IsMoveValid(Board&, Move) : bool
+}
+
+class DiagnalMoveValidator{
+    +IsMoveValid(Board&, Move) : bool
+}
+
+class HorizontalMoveValidator{
+    +IsMoveValid(Board&, Move) : bool
+}
+
+class VerticalMoveValidator{
+    +IsMoveValid(Board&, Move) : bool
+}
+
+class PawnMoveValidator{
+    +IsMoveValid(Board&, Move) : bool
+}
+
+class KingMoveValidator{
+    +IsMoveValid(Board&, Move) : bool
+}
+
+class SingleMoveValidator{
+    +IsMoveValid(Board&, Move)
+}
+
+class PieceFactory{
+    +{static} CreatePiece(string, Color) : *Piece
+}
+
+class Board{
+    #pieces_ : *Piece[][]
+    #captured_pieces_ : *Piece[]
+    #confifgureration : string
+
+    +Board(string)
+    +Board(string, string)
+    +{static} InitBoard(Move) : void
+    +{static} IsOutofRange(Spot) : bool
+    +{static} IsSpotEnemy(Spot) : bool
+    +SetPiece(*Piece, Spot) : void
+    +MovePiece(Move) : bool
+    +CapturePiece(*Piece) : void
+    +UnCapturePiece(*Piece) : void
+    +ResetTile(Spot) : void
+    +{static} GetPiece(Spot) : Piece&
+}
+
+class ChessGame{
+    #current_color_ : Color
+    #white_interface_ : *Interface
+    #blace_interface_ : *Interface
+    #board_ : *Board
+    #move_handler_ : *IMoveHandler
+    #history_ : vector<string>
+    #turns_ : int[][]
+    #interpreter_ : Interpreter
+    #state_checker_ : AbstractStateChecker
+
+    +ChessGame()
+    +ChessGame(*Interface, *Interface)
+    +Start() : void
+    +Init() : void
+    +PlayTurn(*Interface) : int
+    +Undo() : void
+    +swap_interface(*Interface) : *Interface
+    -get_fen() : string
+}
+
+abstract Interface{
+    #Color color_
+
+    +Interface(Color)
+    +Color get_color()
+    +{abrtract} Input(String) : String
+}
+
+class CUI{
+    +Draw(String) : void
+}
+
+Enum ActionType{
+
+}
+
+Enum ErrorType{
+
+}
+
+Enum PieceType{
+
+}
+
+class StateInfo{
+    #state_code_ : int
+    #state_message_ : String
+}
+
+class Interpreter{
+    +Interpret(&Board, &StateInfo) : String
+}
+
+abstract AbstractStateChecker{
+    #chess_game : ChessGame
+
+    +CheckState(Color) : StateInfo
+    +CheckIiiegalState(Color) : StateInfo
+}
+
+class GameStateChecker{
+    #checks_ : GameStateCheck
+
+    +CheckState(Color) : StateInfo
+    +CheckIiiegalState(Color) : StateInfo
+    +AddGameStateCheck(GameStateCheck) : void
+}
+
+abstract GameStateCheck{
+    +get_state(ChessGame, PieceColor) : StateInfo
+    +IsIlliegalForCurrentPlayer() : bool
+}
+
+class CheckMateState{
+    +get_state(ChessGame, PieceColor) : StateInfo
+    +IsIlliegalForCurrentPlayer() : bool
+}
+
+class CheckState{
+    +get_state(ChessGame, PieceColor) : StateInfo
+    +IsIlliegalForCurrentPlayer() : bool
+}
+
+class StaleMateState{
+    +get_state(ChessGame, PieceColor) : StateInfo
+    +IsIlliegalForCurrentPlayer() : bool
+}
+
+class PieceMetaData{
+    #board_ : *Board
+
+    +CanPieceMove(Spot, Color) : bool
+    +IsSpotThreatend(Color, Spot) : bool
+    +IsMoveValid(Move) : bool
+    +FindKingLocation(Color) : Spot
+    +GetOpponentColor(Color) : Color
+}
+
+Piece <|-- Pawn
+Piece <|-- King
+Piece <|-- Rook
+Piece <|-- Bishop
+Piece <|-- Queen
+Piece <|-- Kight
+MoveValidator <|-- DiagnalMoveValidator
+MoveValidator <|-- HorizontalMoveValidator
+MoveValidator <|-- VerticalMoveValidator
+MoveValidator <|-- PawnMoveValidator
+MoveValidator <|-- KingMoveValidator
+MoveValidator <|-- SingleMoveValidator
+Piece *--- MoveValidator
+Board *--- Piece
+Board ---- PieceFactory
+ChessGame *--- Board
+Interface <|-- CUI
+ChessGame *--- Interface
+ChessGame <|-- Interpreter
+ChessGame ---- PieceMetaData
+AbstractStateChecker <|-- GameStateChecker
+GameStateChecker *--- GameStateCheck
+GameStateCheck <|-- CheckMateState
+GameStateCheck <|-- CheckState
+GameStateCheck <|-- StaleMateState
+AbstractStateChecker *--- ChessGame
+@enduml

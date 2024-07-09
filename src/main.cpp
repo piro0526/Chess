@@ -2,10 +2,10 @@
 
 int main()
 {
-    std::unique_ptr<Player> black = std::make_unique<stdinPlayer>(-1);
-    std::unique_ptr<Player> white = std::make_unique<stdinPlayer>(1);
+    auto black = std::make_unique<CUI>(-1);
+    auto white = std::make_unique<CUI>(1);
     ChessGame game(std::move(white), std::move(black));
-    game.start();
+    game.Start();
 
     return 0;
 }

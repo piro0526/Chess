@@ -7,33 +7,30 @@ class StateInfo;
 class GameStateCheck
 {
 public:
-    virtual StateInfo getState(Board& board, PieceMetadata& metadata, Color color) = 0;
-    virtual bool isIllegalForCurrentPlayer() = 0;
+    GameStateCheck(){};
+    virtual ~GameStateCheck(){};
+    virtual StateInfo get_state(Board& board, PieceMetadata& metadata, Color color) = 0;
+    virtual bool IsIllegalForCurrentPlayer() = 0;
+
 };
 
 class CheckState : public GameStateCheck
 {
-private:
-    
 public:
-    StateInfo getState(Board& board, PieceMetadata& metadata, Color color);
-    bool isIllegalForCurrentPlayer();
+    StateInfo get_state(Board& board, PieceMetadata& metadata, Color color);
+    bool IsIllegalForCurrentPlayer();
 };
 
 class CheckMateState : public GameStateCheck
 {
-private:
-    
 public:
-    StateInfo getState(Board& board, PieceMetadata& metadata, Color color);
-    bool isIllegalForCurrentPlayer();
+    StateInfo get_state(Board& board, PieceMetadata& metadata, Color color);
+    bool IsIllegalForCurrentPlayer();
 };
 
 class StaleMateState : public GameStateCheck
 {
-private:
-    
 public:
-    StateInfo getState(Board& board, PieceMetadata& metadata, Color color);
-    bool isIllegalForCurrentPlayer();
+    StateInfo get_state(Board& board, PieceMetadata& metadata, Color color);
+    bool IsIllegalForCurrentPlayer();
 };
